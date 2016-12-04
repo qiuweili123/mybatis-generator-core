@@ -1,0 +1,623 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wepiao.bd.sport.dao.ItemScreeningsMapper">
+  <resultMap id="BaseResultMap" type="com.wepiao.bd.sport.bean.ItemScreenings">
+    <id column="id" jdbcType="VARCHAR" property="id" />
+    <result column="item_id" jdbcType="VARCHAR" property="itemId" />
+    <result column="title_cn" jdbcType="VARCHAR" property="titleCn" />
+    <result column="title_en" jdbcType="VARCHAR" property="titleEn" />
+    <result column="show_start_time" jdbcType="BIGINT" property="showStartTime" />
+    <result column="show_end_time" jdbcType="BIGINT" property="showEndTime" />
+    <result column="check_in" jdbcType="INTEGER" property="checkIn" />
+    <result column="has_idnumber" jdbcType="INTEGER" property="hasIdnumber" />
+    <result column="seat_type" jdbcType="INTEGER" property="seatType" />
+    <result column="seat_person" jdbcType="INTEGER" property="seatPerson" />
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
+    <result column="venue_chart_id" jdbcType="VARCHAR" property="venueChartId" />
+    <result column="is_visible" jdbcType="INTEGER" property="isVisible" />
+    <result column="edit_step" jdbcType="INTEGER" property="editStep" />
+    <result column="width" jdbcType="INTEGER" property="width" />
+    <result column="height" jdbcType="INTEGER" property="height" />
+    <result column="hall_name" jdbcType="VARCHAR" property="hallName" />
+    <result column="venue_chart_template" jdbcType="VARCHAR" property="venueChartTemplate" />
+    <result column="vote_type" jdbcType="VARCHAR" property="voteType" />
+    <result column="stop_buy_type" jdbcType="INTEGER" property="stopBuyType" />
+    <result column="id_max_num" jdbcType="INTEGER" property="idMaxNum" />
+    <result column="is_tariff" jdbcType="BIT" property="isTariff" />
+    <result column="tariff_begin" jdbcType="VARCHAR" property="tariffBegin" />
+    <result column="step_num" jdbcType="INTEGER" property="stepNum" />
+    <result column="tariff_end" jdbcType="VARCHAR" property="tariffEnd" />
+    <result column="grab_start_time" jdbcType="BIGINT" property="grabStartTime" />
+    <result column="is_answer" jdbcType="BIT" property="isAnswer" />
+    <result column="problem_sysid" jdbcType="VARCHAR" property="problemSysid" />
+    <result column="problem_name" jdbcType="VARCHAR" property="problemName" />
+    <result column="open_time" jdbcType="VARCHAR" property="openTime" />
+    <result column="close_time" jdbcType="VARCHAR" property="closeTime" />
+  </resultMap>
+  <sql id="Example_Where_Clause">
+    <where>
+      <foreach collection="oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause">
+    <where>
+      <foreach collection="example.oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List">
+    id, item_id, title_cn, title_en, show_start_time, show_end_time, check_in, has_idnumber, 
+    seat_type, seat_person, remark, venue_chart_id, is_visible, edit_step, width, height, 
+    hall_name, venue_chart_template, vote_type, stop_buy_type, id_max_num, is_tariff, 
+    tariff_begin, step_num, tariff_end, grab_start_time, is_answer, problem_sysid, problem_name, 
+    open_time, close_time
+  </sql>
+  <select id="selectByExample" parameterType="com.wepiao.bd.sport.bean.ItemScreeningsCriteria" resultMap="BaseResultMap">
+    select
+    <if test="distinct">
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from item_screenings
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null">
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from item_screenings
+    where id = #{id,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+    delete from item_screenings
+    where id = #{id,jdbcType=VARCHAR}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.wepiao.bd.sport.bean.ItemScreeningsCriteria">
+    delete from item_screenings
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.wepiao.bd.sport.bean.ItemScreenings">
+    insert into item_screenings (id, item_id, title_cn, 
+      title_en, show_start_time, show_end_time, 
+      check_in, has_idnumber, seat_type, 
+      seat_person, remark, venue_chart_id, 
+      is_visible, edit_step, width, 
+      height, hall_name, venue_chart_template, 
+      vote_type, stop_buy_type, id_max_num, 
+      is_tariff, tariff_begin, step_num, 
+      tariff_end, grab_start_time, is_answer, 
+      problem_sysid, problem_name, open_time, 
+      close_time)
+    values (#{id,jdbcType=VARCHAR}, #{itemId,jdbcType=VARCHAR}, #{titleCn,jdbcType=VARCHAR}, 
+      #{titleEn,jdbcType=VARCHAR}, #{showStartTime,jdbcType=BIGINT}, #{showEndTime,jdbcType=BIGINT}, 
+      #{checkIn,jdbcType=INTEGER}, #{hasIdnumber,jdbcType=INTEGER}, #{seatType,jdbcType=INTEGER}, 
+      #{seatPerson,jdbcType=INTEGER}, #{remark,jdbcType=VARCHAR}, #{venueChartId,jdbcType=VARCHAR}, 
+      #{isVisible,jdbcType=INTEGER}, #{editStep,jdbcType=INTEGER}, #{width,jdbcType=INTEGER}, 
+      #{height,jdbcType=INTEGER}, #{hallName,jdbcType=VARCHAR}, #{venueChartTemplate,jdbcType=VARCHAR}, 
+      #{voteType,jdbcType=VARCHAR}, #{stopBuyType,jdbcType=INTEGER}, #{idMaxNum,jdbcType=INTEGER}, 
+      #{isTariff,jdbcType=BIT}, #{tariffBegin,jdbcType=VARCHAR}, #{stepNum,jdbcType=INTEGER}, 
+      #{tariffEnd,jdbcType=VARCHAR}, #{grabStartTime,jdbcType=BIGINT}, #{isAnswer,jdbcType=BIT}, 
+      #{problemSysid,jdbcType=VARCHAR}, #{problemName,jdbcType=VARCHAR}, #{openTime,jdbcType=VARCHAR}, 
+      #{closeTime,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.wepiao.bd.sport.bean.ItemScreenings">
+    insert into item_screenings
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="itemId != null">
+        item_id,
+      </if>
+      <if test="titleCn != null">
+        title_cn,
+      </if>
+      <if test="titleEn != null">
+        title_en,
+      </if>
+      <if test="showStartTime != null">
+        show_start_time,
+      </if>
+      <if test="showEndTime != null">
+        show_end_time,
+      </if>
+      <if test="checkIn != null">
+        check_in,
+      </if>
+      <if test="hasIdnumber != null">
+        has_idnumber,
+      </if>
+      <if test="seatType != null">
+        seat_type,
+      </if>
+      <if test="seatPerson != null">
+        seat_person,
+      </if>
+      <if test="remark != null">
+        remark,
+      </if>
+      <if test="venueChartId != null">
+        venue_chart_id,
+      </if>
+      <if test="isVisible != null">
+        is_visible,
+      </if>
+      <if test="editStep != null">
+        edit_step,
+      </if>
+      <if test="width != null">
+        width,
+      </if>
+      <if test="height != null">
+        height,
+      </if>
+      <if test="hallName != null">
+        hall_name,
+      </if>
+      <if test="venueChartTemplate != null">
+        venue_chart_template,
+      </if>
+      <if test="voteType != null">
+        vote_type,
+      </if>
+      <if test="stopBuyType != null">
+        stop_buy_type,
+      </if>
+      <if test="idMaxNum != null">
+        id_max_num,
+      </if>
+      <if test="isTariff != null">
+        is_tariff,
+      </if>
+      <if test="tariffBegin != null">
+        tariff_begin,
+      </if>
+      <if test="stepNum != null">
+        step_num,
+      </if>
+      <if test="tariffEnd != null">
+        tariff_end,
+      </if>
+      <if test="grabStartTime != null">
+        grab_start_time,
+      </if>
+      <if test="isAnswer != null">
+        is_answer,
+      </if>
+      <if test="problemSysid != null">
+        problem_sysid,
+      </if>
+      <if test="problemName != null">
+        problem_name,
+      </if>
+      <if test="openTime != null">
+        open_time,
+      </if>
+      <if test="closeTime != null">
+        close_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=VARCHAR},
+      </if>
+      <if test="itemId != null">
+        #{itemId,jdbcType=VARCHAR},
+      </if>
+      <if test="titleCn != null">
+        #{titleCn,jdbcType=VARCHAR},
+      </if>
+      <if test="titleEn != null">
+        #{titleEn,jdbcType=VARCHAR},
+      </if>
+      <if test="showStartTime != null">
+        #{showStartTime,jdbcType=BIGINT},
+      </if>
+      <if test="showEndTime != null">
+        #{showEndTime,jdbcType=BIGINT},
+      </if>
+      <if test="checkIn != null">
+        #{checkIn,jdbcType=INTEGER},
+      </if>
+      <if test="hasIdnumber != null">
+        #{hasIdnumber,jdbcType=INTEGER},
+      </if>
+      <if test="seatType != null">
+        #{seatType,jdbcType=INTEGER},
+      </if>
+      <if test="seatPerson != null">
+        #{seatPerson,jdbcType=INTEGER},
+      </if>
+      <if test="remark != null">
+        #{remark,jdbcType=VARCHAR},
+      </if>
+      <if test="venueChartId != null">
+        #{venueChartId,jdbcType=VARCHAR},
+      </if>
+      <if test="isVisible != null">
+        #{isVisible,jdbcType=INTEGER},
+      </if>
+      <if test="editStep != null">
+        #{editStep,jdbcType=INTEGER},
+      </if>
+      <if test="width != null">
+        #{width,jdbcType=INTEGER},
+      </if>
+      <if test="height != null">
+        #{height,jdbcType=INTEGER},
+      </if>
+      <if test="hallName != null">
+        #{hallName,jdbcType=VARCHAR},
+      </if>
+      <if test="venueChartTemplate != null">
+        #{venueChartTemplate,jdbcType=VARCHAR},
+      </if>
+      <if test="voteType != null">
+        #{voteType,jdbcType=VARCHAR},
+      </if>
+      <if test="stopBuyType != null">
+        #{stopBuyType,jdbcType=INTEGER},
+      </if>
+      <if test="idMaxNum != null">
+        #{idMaxNum,jdbcType=INTEGER},
+      </if>
+      <if test="isTariff != null">
+        #{isTariff,jdbcType=BIT},
+      </if>
+      <if test="tariffBegin != null">
+        #{tariffBegin,jdbcType=VARCHAR},
+      </if>
+      <if test="stepNum != null">
+        #{stepNum,jdbcType=INTEGER},
+      </if>
+      <if test="tariffEnd != null">
+        #{tariffEnd,jdbcType=VARCHAR},
+      </if>
+      <if test="grabStartTime != null">
+        #{grabStartTime,jdbcType=BIGINT},
+      </if>
+      <if test="isAnswer != null">
+        #{isAnswer,jdbcType=BIT},
+      </if>
+      <if test="problemSysid != null">
+        #{problemSysid,jdbcType=VARCHAR},
+      </if>
+      <if test="problemName != null">
+        #{problemName,jdbcType=VARCHAR},
+      </if>
+      <if test="openTime != null">
+        #{openTime,jdbcType=VARCHAR},
+      </if>
+      <if test="closeTime != null">
+        #{closeTime,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.wepiao.bd.sport.bean.ItemScreeningsCriteria" resultType="java.lang.Long">
+    select count(*) from item_screenings
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map">
+    update item_screenings
+    <set>
+      <if test="record.id != null">
+        id = #{record.id,jdbcType=VARCHAR},
+      </if>
+      <if test="record.itemId != null">
+        item_id = #{record.itemId,jdbcType=VARCHAR},
+      </if>
+      <if test="record.titleCn != null">
+        title_cn = #{record.titleCn,jdbcType=VARCHAR},
+      </if>
+      <if test="record.titleEn != null">
+        title_en = #{record.titleEn,jdbcType=VARCHAR},
+      </if>
+      <if test="record.showStartTime != null">
+        show_start_time = #{record.showStartTime,jdbcType=BIGINT},
+      </if>
+      <if test="record.showEndTime != null">
+        show_end_time = #{record.showEndTime,jdbcType=BIGINT},
+      </if>
+      <if test="record.checkIn != null">
+        check_in = #{record.checkIn,jdbcType=INTEGER},
+      </if>
+      <if test="record.hasIdnumber != null">
+        has_idnumber = #{record.hasIdnumber,jdbcType=INTEGER},
+      </if>
+      <if test="record.seatType != null">
+        seat_type = #{record.seatType,jdbcType=INTEGER},
+      </if>
+      <if test="record.seatPerson != null">
+        seat_person = #{record.seatPerson,jdbcType=INTEGER},
+      </if>
+      <if test="record.remark != null">
+        remark = #{record.remark,jdbcType=VARCHAR},
+      </if>
+      <if test="record.venueChartId != null">
+        venue_chart_id = #{record.venueChartId,jdbcType=VARCHAR},
+      </if>
+      <if test="record.isVisible != null">
+        is_visible = #{record.isVisible,jdbcType=INTEGER},
+      </if>
+      <if test="record.editStep != null">
+        edit_step = #{record.editStep,jdbcType=INTEGER},
+      </if>
+      <if test="record.width != null">
+        width = #{record.width,jdbcType=INTEGER},
+      </if>
+      <if test="record.height != null">
+        height = #{record.height,jdbcType=INTEGER},
+      </if>
+      <if test="record.hallName != null">
+        hall_name = #{record.hallName,jdbcType=VARCHAR},
+      </if>
+      <if test="record.venueChartTemplate != null">
+        venue_chart_template = #{record.venueChartTemplate,jdbcType=VARCHAR},
+      </if>
+      <if test="record.voteType != null">
+        vote_type = #{record.voteType,jdbcType=VARCHAR},
+      </if>
+      <if test="record.stopBuyType != null">
+        stop_buy_type = #{record.stopBuyType,jdbcType=INTEGER},
+      </if>
+      <if test="record.idMaxNum != null">
+        id_max_num = #{record.idMaxNum,jdbcType=INTEGER},
+      </if>
+      <if test="record.isTariff != null">
+        is_tariff = #{record.isTariff,jdbcType=BIT},
+      </if>
+      <if test="record.tariffBegin != null">
+        tariff_begin = #{record.tariffBegin,jdbcType=VARCHAR},
+      </if>
+      <if test="record.stepNum != null">
+        step_num = #{record.stepNum,jdbcType=INTEGER},
+      </if>
+      <if test="record.tariffEnd != null">
+        tariff_end = #{record.tariffEnd,jdbcType=VARCHAR},
+      </if>
+      <if test="record.grabStartTime != null">
+        grab_start_time = #{record.grabStartTime,jdbcType=BIGINT},
+      </if>
+      <if test="record.isAnswer != null">
+        is_answer = #{record.isAnswer,jdbcType=BIT},
+      </if>
+      <if test="record.problemSysid != null">
+        problem_sysid = #{record.problemSysid,jdbcType=VARCHAR},
+      </if>
+      <if test="record.problemName != null">
+        problem_name = #{record.problemName,jdbcType=VARCHAR},
+      </if>
+      <if test="record.openTime != null">
+        open_time = #{record.openTime,jdbcType=VARCHAR},
+      </if>
+      <if test="record.closeTime != null">
+        close_time = #{record.closeTime,jdbcType=VARCHAR},
+      </if>
+    </set>
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map">
+    update item_screenings
+    set id = #{record.id,jdbcType=VARCHAR},
+      item_id = #{record.itemId,jdbcType=VARCHAR},
+      title_cn = #{record.titleCn,jdbcType=VARCHAR},
+      title_en = #{record.titleEn,jdbcType=VARCHAR},
+      show_start_time = #{record.showStartTime,jdbcType=BIGINT},
+      show_end_time = #{record.showEndTime,jdbcType=BIGINT},
+      check_in = #{record.checkIn,jdbcType=INTEGER},
+      has_idnumber = #{record.hasIdnumber,jdbcType=INTEGER},
+      seat_type = #{record.seatType,jdbcType=INTEGER},
+      seat_person = #{record.seatPerson,jdbcType=INTEGER},
+      remark = #{record.remark,jdbcType=VARCHAR},
+      venue_chart_id = #{record.venueChartId,jdbcType=VARCHAR},
+      is_visible = #{record.isVisible,jdbcType=INTEGER},
+      edit_step = #{record.editStep,jdbcType=INTEGER},
+      width = #{record.width,jdbcType=INTEGER},
+      height = #{record.height,jdbcType=INTEGER},
+      hall_name = #{record.hallName,jdbcType=VARCHAR},
+      venue_chart_template = #{record.venueChartTemplate,jdbcType=VARCHAR},
+      vote_type = #{record.voteType,jdbcType=VARCHAR},
+      stop_buy_type = #{record.stopBuyType,jdbcType=INTEGER},
+      id_max_num = #{record.idMaxNum,jdbcType=INTEGER},
+      is_tariff = #{record.isTariff,jdbcType=BIT},
+      tariff_begin = #{record.tariffBegin,jdbcType=VARCHAR},
+      step_num = #{record.stepNum,jdbcType=INTEGER},
+      tariff_end = #{record.tariffEnd,jdbcType=VARCHAR},
+      grab_start_time = #{record.grabStartTime,jdbcType=BIGINT},
+      is_answer = #{record.isAnswer,jdbcType=BIT},
+      problem_sysid = #{record.problemSysid,jdbcType=VARCHAR},
+      problem_name = #{record.problemName,jdbcType=VARCHAR},
+      open_time = #{record.openTime,jdbcType=VARCHAR},
+      close_time = #{record.closeTime,jdbcType=VARCHAR}
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.wepiao.bd.sport.bean.ItemScreenings">
+    update item_screenings
+    <set>
+      <if test="itemId != null">
+        item_id = #{itemId,jdbcType=VARCHAR},
+      </if>
+      <if test="titleCn != null">
+        title_cn = #{titleCn,jdbcType=VARCHAR},
+      </if>
+      <if test="titleEn != null">
+        title_en = #{titleEn,jdbcType=VARCHAR},
+      </if>
+      <if test="showStartTime != null">
+        show_start_time = #{showStartTime,jdbcType=BIGINT},
+      </if>
+      <if test="showEndTime != null">
+        show_end_time = #{showEndTime,jdbcType=BIGINT},
+      </if>
+      <if test="checkIn != null">
+        check_in = #{checkIn,jdbcType=INTEGER},
+      </if>
+      <if test="hasIdnumber != null">
+        has_idnumber = #{hasIdnumber,jdbcType=INTEGER},
+      </if>
+      <if test="seatType != null">
+        seat_type = #{seatType,jdbcType=INTEGER},
+      </if>
+      <if test="seatPerson != null">
+        seat_person = #{seatPerson,jdbcType=INTEGER},
+      </if>
+      <if test="remark != null">
+        remark = #{remark,jdbcType=VARCHAR},
+      </if>
+      <if test="venueChartId != null">
+        venue_chart_id = #{venueChartId,jdbcType=VARCHAR},
+      </if>
+      <if test="isVisible != null">
+        is_visible = #{isVisible,jdbcType=INTEGER},
+      </if>
+      <if test="editStep != null">
+        edit_step = #{editStep,jdbcType=INTEGER},
+      </if>
+      <if test="width != null">
+        width = #{width,jdbcType=INTEGER},
+      </if>
+      <if test="height != null">
+        height = #{height,jdbcType=INTEGER},
+      </if>
+      <if test="hallName != null">
+        hall_name = #{hallName,jdbcType=VARCHAR},
+      </if>
+      <if test="venueChartTemplate != null">
+        venue_chart_template = #{venueChartTemplate,jdbcType=VARCHAR},
+      </if>
+      <if test="voteType != null">
+        vote_type = #{voteType,jdbcType=VARCHAR},
+      </if>
+      <if test="stopBuyType != null">
+        stop_buy_type = #{stopBuyType,jdbcType=INTEGER},
+      </if>
+      <if test="idMaxNum != null">
+        id_max_num = #{idMaxNum,jdbcType=INTEGER},
+      </if>
+      <if test="isTariff != null">
+        is_tariff = #{isTariff,jdbcType=BIT},
+      </if>
+      <if test="tariffBegin != null">
+        tariff_begin = #{tariffBegin,jdbcType=VARCHAR},
+      </if>
+      <if test="stepNum != null">
+        step_num = #{stepNum,jdbcType=INTEGER},
+      </if>
+      <if test="tariffEnd != null">
+        tariff_end = #{tariffEnd,jdbcType=VARCHAR},
+      </if>
+      <if test="grabStartTime != null">
+        grab_start_time = #{grabStartTime,jdbcType=BIGINT},
+      </if>
+      <if test="isAnswer != null">
+        is_answer = #{isAnswer,jdbcType=BIT},
+      </if>
+      <if test="problemSysid != null">
+        problem_sysid = #{problemSysid,jdbcType=VARCHAR},
+      </if>
+      <if test="problemName != null">
+        problem_name = #{problemName,jdbcType=VARCHAR},
+      </if>
+      <if test="openTime != null">
+        open_time = #{openTime,jdbcType=VARCHAR},
+      </if>
+      <if test="closeTime != null">
+        close_time = #{closeTime,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.wepiao.bd.sport.bean.ItemScreenings">
+    update item_screenings
+    set item_id = #{itemId,jdbcType=VARCHAR},
+      title_cn = #{titleCn,jdbcType=VARCHAR},
+      title_en = #{titleEn,jdbcType=VARCHAR},
+      show_start_time = #{showStartTime,jdbcType=BIGINT},
+      show_end_time = #{showEndTime,jdbcType=BIGINT},
+      check_in = #{checkIn,jdbcType=INTEGER},
+      has_idnumber = #{hasIdnumber,jdbcType=INTEGER},
+      seat_type = #{seatType,jdbcType=INTEGER},
+      seat_person = #{seatPerson,jdbcType=INTEGER},
+      remark = #{remark,jdbcType=VARCHAR},
+      venue_chart_id = #{venueChartId,jdbcType=VARCHAR},
+      is_visible = #{isVisible,jdbcType=INTEGER},
+      edit_step = #{editStep,jdbcType=INTEGER},
+      width = #{width,jdbcType=INTEGER},
+      height = #{height,jdbcType=INTEGER},
+      hall_name = #{hallName,jdbcType=VARCHAR},
+      venue_chart_template = #{venueChartTemplate,jdbcType=VARCHAR},
+      vote_type = #{voteType,jdbcType=VARCHAR},
+      stop_buy_type = #{stopBuyType,jdbcType=INTEGER},
+      id_max_num = #{idMaxNum,jdbcType=INTEGER},
+      is_tariff = #{isTariff,jdbcType=BIT},
+      tariff_begin = #{tariffBegin,jdbcType=VARCHAR},
+      step_num = #{stepNum,jdbcType=INTEGER},
+      tariff_end = #{tariffEnd,jdbcType=VARCHAR},
+      grab_start_time = #{grabStartTime,jdbcType=BIGINT},
+      is_answer = #{isAnswer,jdbcType=BIT},
+      problem_sysid = #{problemSysid,jdbcType=VARCHAR},
+      problem_name = #{problemName,jdbcType=VARCHAR},
+      open_time = #{openTime,jdbcType=VARCHAR},
+      close_time = #{closeTime,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+</mapper>

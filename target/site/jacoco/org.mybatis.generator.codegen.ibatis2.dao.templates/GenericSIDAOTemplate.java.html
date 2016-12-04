@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="zh"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>GenericSIDAOTemplate.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">MyBatis Generator Core</a> &gt; <a href="index.source.html" class="el_package">org.mybatis.generator.codegen.ibatis2.dao.templates</a> &gt; <span class="el_source">GenericSIDAOTemplate.java</span></div><h1>GenericSIDAOTemplate.java</h1><pre class="source lang-java linenums">/**
+ * Copyright 2006-2016 the original author or authors.
+ * &lt;p&gt;
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * &lt;p&gt;
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * &lt;p&gt;
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package org.mybatis.generator.codegen.ibatis2.dao.templates;
+
+import org.mybatis.generator.api.dom.java.*;
+
+/**
+ * @author Jeff Butler
+ */
+public class GenericSIDAOTemplate extends AbstractDAOTemplate {
+
+<span class="nc" id="L25">    private FullyQualifiedJavaType sqlMapClientType = new FullyQualifiedJavaType(</span>
+            &quot;com.ibatis.sqlmap.client.SqlMapClient&quot;); //$NON-NLS-1$
+
+    /**
+     *
+     */
+    public GenericSIDAOTemplate() {
+<span class="nc" id="L32">        super();</span>
+<span class="nc" id="L33">    }</span>
+
+    @Override
+    protected void configureCheckedExceptions() {
+<span class="nc" id="L37">        addCheckedException(new FullyQualifiedJavaType(&quot;java.sql.SQLException&quot;)); //$NON-NLS-1$</span>
+<span class="nc" id="L38">    }</span>
+
+    @Override
+    protected void configureConstructorTemplate() {
+<span class="nc" id="L42">        Method method = new Method();</span>
+<span class="nc" id="L43">        method.setConstructor(true);</span>
+<span class="nc" id="L44">        method.setVisibility(JavaVisibility.PUBLIC);</span>
+<span class="nc" id="L45">        method.addBodyLine(&quot;super();&quot;); //$NON-NLS-1$</span>
+<span class="nc" id="L46">        setConstructorTemplate(method);</span>
+<span class="nc" id="L47">    }</span>
+
+    @Override
+    protected void configureDeleteMethodTemplate() {
+<span class="nc" id="L51">        setDeleteMethodTemplate(&quot;sqlMapClient.delete(\&quot;{0}.{1}\&quot;, {2});&quot;); //$NON-NLS-1$</span>
+<span class="nc" id="L52">    }</span>
+
+    @Override
+    protected void configureFields() {
+<span class="nc" id="L56">        Field field = new Field();</span>
+<span class="nc" id="L57">        field.setVisibility(JavaVisibility.PRIVATE);</span>
+<span class="nc" id="L58">        field.setType(sqlMapClientType);</span>
+<span class="nc" id="L59">        field.setName(&quot;sqlMapClient&quot;); //$NON-NLS-1$</span>
+<span class="nc" id="L60">        addField(field);</span>
+<span class="nc" id="L61">    }</span>
+
+    @Override
+    protected void configureImplementationImports() {
+<span class="nc" id="L65">        addImplementationImport(sqlMapClientType);</span>
+<span class="nc" id="L66">    }</span>
+
+    @Override
+    protected void configureInsertMethodTemplate() {
+<span class="nc" id="L70">        setInsertMethodTemplate(&quot;sqlMapClient.insert(\&quot;{0}.{1}\&quot;, {2});&quot;); //$NON-NLS-1$</span>
+<span class="nc" id="L71">    }</span>
+
+    @Override
+    protected void configureMethods() {
+<span class="nc" id="L75">        Method method = new Method();</span>
+<span class="nc" id="L76">        method.setVisibility(JavaVisibility.PUBLIC);</span>
+<span class="nc" id="L77">        method.setName(&quot;setSqlMapClient&quot;); //$NON-NLS-1$</span>
+<span class="nc" id="L78">        method.addParameter(new Parameter(sqlMapClientType, &quot;sqlMapClient&quot;)); //$NON-NLS-1$</span>
+<span class="nc" id="L79">        method.addBodyLine(&quot;this.sqlMapClient = sqlMapClient;&quot;); //$NON-NLS-1$</span>
+<span class="nc" id="L80">        addMethod(method);</span>
+
+<span class="nc" id="L82">        method = new Method();</span>
+<span class="nc" id="L83">        method.setVisibility(JavaVisibility.PUBLIC);</span>
+<span class="nc" id="L84">        method.setName(&quot;getSqlMapClient&quot;); //$NON-NLS-1$</span>
+<span class="nc" id="L85">        method.setReturnType(sqlMapClientType);</span>
+<span class="nc" id="L86">        method.addBodyLine(&quot;return sqlMapClient;&quot;); //$NON-NLS-1$</span>
+<span class="nc" id="L87">        addMethod(method);</span>
+<span class="nc" id="L88">    }</span>
+
+    @Override
+    protected void configureQueryForListMethodTemplate() {
+<span class="nc" id="L92">        setQueryForListMethodTemplate(&quot;sqlMapClient.queryForList(\&quot;{0}.{1}\&quot;, {2});&quot;); //$NON-NLS-1$</span>
+<span class="nc" id="L93">    }</span>
+
+    @Override
+    protected void configureQueryForObjectMethodTemplate() {
+<span class="nc" id="L97">        setQueryForObjectMethodTemplate(&quot;sqlMapClient.queryForObject(\&quot;{0}.{1}\&quot;, {2});&quot;); //$NON-NLS-1$</span>
+<span class="nc" id="L98">    }</span>
+
+    @Override
+    protected void configureUpdateMethodTemplate() {
+<span class="nc" id="L102">        setUpdateMethodTemplate(&quot;sqlMapClient.update(\&quot;{0}.{1}\&quot;, {2});&quot;); //$NON-NLS-1$</span>
+<span class="nc" id="L103">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.7.201606060606</span></div></body></html>

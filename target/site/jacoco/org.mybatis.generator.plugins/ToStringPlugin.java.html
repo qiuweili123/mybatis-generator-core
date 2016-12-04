@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="zh"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ToStringPlugin.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">MyBatis Generator Core</a> &gt; <a href="index.source.html" class="el_package">org.mybatis.generator.plugins</a> &gt; <span class="el_source">ToStringPlugin.java</span></div><h1>ToStringPlugin.java</h1><pre class="source lang-java linenums">/**
+ * Copyright 2006-2016 the original author or authors.
+ * &lt;p&gt;
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * &lt;p&gt;
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * &lt;p&gt;
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package org.mybatis.generator.plugins;
+
+import org.mybatis.generator.api.IntrospectedTable;
+import org.mybatis.generator.api.PluginAdapter;
+import org.mybatis.generator.api.dom.java.*;
+
+import java.util.List;
+import java.util.Properties;
+
+import static org.mybatis.generator.internal.util.StringUtility.isTrue;
+
+<span class="nc" id="L27">public class ToStringPlugin extends PluginAdapter {</span>
+
+    private boolean useToStringFromRoot;
+
+    @Override
+    public void setProperties(Properties properties) {
+<span class="nc" id="L33">        super.setProperties(properties);</span>
+<span class="nc" id="L34">        useToStringFromRoot = isTrue(properties.getProperty(&quot;useToStringFromRoot&quot;));</span>
+<span class="nc" id="L35">    }</span>
+
+    /**
+     * 实现了validate方法，validate方法是所有的plugin都必须实现的方法
+     *
+     * @param warnings add strings to this list to specify warnings. For example, if
+     *                 the plugin is invalid, you should specify why. Warnings are
+     *                 reported to users after the completion of the run.
+     * @return
+     */
+    public boolean validate(List&lt;String&gt; warnings) {
+<span class="nc" id="L46">        return true;</span>
+    }
+
+    /**
+     * 在MBG生成record类的时候调用的插件的方法，在该方法中，传入两个参数
+     *
+     * @param topLevelClass     该类的实例就是表示当前正在生成的类的DOM结构
+     * @param introspectedTable 代表的runtime环境，包含了所有context中的配置，一般从这个类中去查询生成对象的一些规则；
+     * @return
+     */
+    @Override
+    public boolean modelBaseRecordClassGenerated(TopLevelClass topLevelClass,
+                                                 IntrospectedTable introspectedTable) {
+<span class="nc" id="L59">        generateToString(introspectedTable, topLevelClass);</span>
+
+        /* 这个方法总是返回了true，让后面的实现了相同方法的插件能正常运行； */
+<span class="nc" id="L62">        return true;</span>
+    }
+
+    /**
+     * 在MBG生成key Class类的时候调用的插件的方法
+     */
+    @Override
+    public boolean modelRecordWithBLOBsClassGenerated(
+            TopLevelClass topLevelClass, IntrospectedTable introspectedTable) {
+<span class="nc" id="L71">        generateToString(introspectedTable, topLevelClass);</span>
+<span class="nc" id="L72">        return true;</span>
+    }
+
+    @Override
+    public boolean modelPrimaryKeyClassGenerated(TopLevelClass topLevelClass,
+                                                 IntrospectedTable introspectedTable) {
+<span class="nc" id="L78">        generateToString(introspectedTable, topLevelClass);</span>
+<span class="nc" id="L79">        return true;</span>
+    }
+
+    /**
+     * 具体生成toString方法
+     *
+     * @param introspectedTable
+     * @param topLevelClass
+     */
+    private void generateToString(IntrospectedTable introspectedTable,
+                                  TopLevelClass topLevelClass) {
+        //首先创建一个Method对象，注意，这个Method是org.mybatis.generator.api.dom.java.Method，
+        //这个Method是MBG中对对象DOM的一个抽象；因为我们要添加方法，所以先创建一个；
+<span class="nc" id="L92">        Method method = new Method();</span>
+
+        //设置这个方法的可见性为public，代码已经在一步一步构建这个方法了
+<span class="nc" id="L95">        method.setVisibility(JavaVisibility.PUBLIC);</span>
+
+        //设置方法的返回类型，这里注意一下的就是，returnType是一个FullyQualifiedJavaType；
+        //这个FullyQualifiedJavaType是MGB中对Java中的类型的一个DOM封装，这个类在整个MBG中大量使用；
+        //FullyQualifiedJavaType提供了几个静态的方法，比如getStringInstance，就直接返回了一个对String类型的封装；
+<span class="nc" id="L100">        method.setReturnType(FullyQualifiedJavaType.getStringInstance());</span>
+
+        //设置方法的名称，至此，方法签名已经装配完成；
+<span class="nc" id="L103">        method.setName(&quot;toString&quot;); //$NON-NLS-1$</span>
+
+        //判断当前MBG运行的环境是否支持Java5（这里就可以看出来IntrospectedTable类的作用了，主要是查询生成环境的作用）
+<span class="nc bnc" id="L106" title="All 2 branches missed.">        if (introspectedTable.isJava5Targeted()) {</span>
+            //如果支持Java5，就在方法上面生成一个@Override标签；
+<span class="nc" id="L108">            method.addAnnotation(&quot;@Override&quot;); //$NON-NLS-1$</span>
+        }
+
+        //访问上下文对象（这个context对象是在PluginAdapter初始化完成后，通过setContext方法设置进去的，
+        //通过getCommentGenerator方法得到注释生成器，并调用addGeneralMethodComment为当前生成的方法添加注释；
+        //因为我们没有提供自己的注释生成器，所以默认的注释生成器只是说明方法是通过MBG生成的，对应的是哪个表而已；
+        //这句代码其实非常有意义，通过这句代码，我们基本就可能了解到MBG中对于方法注释的生成方式了；
+<span class="nc" id="L115">        context.getCommentGenerator().addGeneralMethodComment(method,</span>
+                introspectedTable);
+
+        //OK，调用addBodyLine开始为方法添加代码了
+        //可以看到，确实，只是简单的把要生成的代码通过String拼装到了method的body中而已；
+        //想到了什么？确实，我想到了Servelt的输出方法。MBG默认的方法体具体的实现，就是像Servlet那样通过String输出的；
+        //所以，这才会为我们后面准备用Velocity来重写MBG提供了依据，我们只是给MBG添加一个MVC的概念；
+<span class="nc" id="L122">        method.addBodyLine(&quot;StringBuilder sb = new StringBuilder();&quot;); //$NON-NLS-1$</span>
+<span class="nc" id="L123">        method.addBodyLine(&quot;sb.append(getClass().getSimpleName());&quot;); //$NON-NLS-1$</span>
+<span class="nc" id="L124">        method.addBodyLine(&quot;sb.append(\&quot; [\&quot;);&quot;); //$NON-NLS-1$</span>
+<span class="nc" id="L125">        method.addBodyLine(&quot;sb.append(\&quot;Hash = \&quot;).append(hashCode());&quot;); //$NON-NLS-1$</span>
+
+        //接下来要准备拼装类的字段了；
+<span class="nc" id="L128">        StringBuilder sb = new StringBuilder();</span>
+
+        //通过topLevelClass得到当前类的所有字段，注意，这里的Field是org.mybatis.generator.api.dom.java.Field
+        //这个Field是MBG对字段的一个DOM封装
+<span class="nc bnc" id="L132" title="All 2 branches missed.">        for (Field field : topLevelClass.getFields()) {</span>
+
+            //得到字段的名称；
+<span class="nc" id="L135">            String property = field.getName();</span>
+
+            //重置StringBuilder；
+<span class="nc" id="L138">            sb.setLength(0);</span>
+
+            //添加字段的输出代码；
+<span class="nc" id="L141">            sb.append(&quot;sb.append(\&quot;&quot;).append(&quot;, &quot;).append(property) //$NON-NLS-1$ //$NON-NLS-2$</span>
+                    .append(&quot;=\&quot;)&quot;).append(&quot;.append(&quot;).append(property) //$NON-NLS-1$ //$NON-NLS-2$
+                    .append(&quot;);&quot;); //$NON-NLS-1$
+
+            //把这个字段的toString输出到代码中；所以才看到我们最后生成的代码结果中，每一个字段在toString方法中各占一行；
+<span class="nc" id="L146">            method.addBodyLine(sb.toString());</span>
+<span class="nc" id="L147">        }</span>
+
+<span class="nc" id="L149">        method.addBodyLine(&quot;sb.append(\&quot;]\&quot;);&quot;); //$NON-NLS-1$</span>
+<span class="nc bnc" id="L150" title="All 4 branches missed.">        if (useToStringFromRoot &amp;&amp; topLevelClass.getSuperClass() != null) {</span>
+<span class="nc" id="L151">            method.addBodyLine(&quot;sb.append(\&quot;, from super class \&quot;);&quot;); //$NON-NLS-1$</span>
+<span class="nc" id="L152">            method.addBodyLine(&quot;sb.append(super.toString());&quot;); //$NON-NLS-1$</span>
+        }
+<span class="nc" id="L154">        method.addBodyLine(&quot;return sb.toString();&quot;); //$NON-NLS-1$</span>
+
+        //把拼装好的方法DOM添加到topLevelClass中，完成方法添加；
+<span class="nc" id="L157">        topLevelClass.addMethod(method);</span>
+<span class="nc" id="L158">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.7.201606060606</span></div></body></html>

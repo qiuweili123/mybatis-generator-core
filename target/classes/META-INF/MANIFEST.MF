@@ -1,0 +1,66 @@
+Manifest-Version: 1.0
+Bundle-License: http://www.apache.org/licenses/LICENSE-2.0.txt
+Bundle-SymbolicName: com.anglebeat.mybatis.mybatis-generator-core
+Built-By: angle
+Bnd-LastModified: 1480830945455
+Specification-Title: MyBatis Generator Core
+Implementation-Vendor-Id: com.anglebeat.mybatis
+Bundle-DocURL: http://maven.apache.org
+Include-Resource: common/config.properties=src/main/resources/common/c
+ onfig.properties,common/generatorConfig.xml=src/main/resources/common
+ /generatorConfig.xml,mysql/config.properties=src/main/resources/mysql
+ /config.properties,mysql/generatorConfigForMySql.xml=src/main/resourc
+ es/mysql/generatorConfigForMySql.xml,oracle/config.properties=src/mai
+ n/resources/oracle/config.properties,oracle/generatorConfigForOracle.
+ xml=src/main/resources/oracle/generatorConfigForOracle.xml,org/mybati
+ s/generator/config/xml/ibator-config_1_0.dtd=src/main/resources/org/m
+ ybatis/generator/config/xml/ibator-config_1_0.dtd,org/mybatis/generat
+ or/config/xml/mybatis-generator-config_1_0.dtd=src/main/resources/org
+ /mybatis/generator/config/xml/mybatis-generator-config_1_0.dtd,org/my
+ batis/generator/internal/util/messages/messages.properties=src/main/r
+ esources/org/mybatis/generator/internal/util/messages/messages.proper
+ ties
+Import-Package: javax.xml.parsers,org.apache.log4j,org.apache.tools.an
+ t,org.apache.tools.ant.types,org.w3c.dom,org.xml.sax
+Require-Capability: osgi.ee;filter:="(&(osgi.ee=JavaSE)(version=1.7))"
+Main-Class: org.mybatis.generator.api.ShellRunner
+Implementation-Build-Date: 2016-12-04 05:55:31+0000
+Bundle-Name: MyBatis Generator Core
+Implementation-Title: MyBatis Generator Core
+Bundle-Description: Parent POM for MyBatis Generator
+Implementation-Version: 0.0.1-SNAPSHOT
+Specification-Vendor: MyBatis.org
+Bundle-ManifestVersion: 2
+Bundle-Vendor: MyBatis.org
+Tool: Bnd-2.4.1.201501161923
+Implementation-Vendor: MyBatis.org
+Originally-Created-By: Maven Integration for Eclipse
+Bundle-Version: 0.0.1.SNAPSHOT
+X-Compile-Target-JDK: 1.6
+Private-Package: com.mybatis.generator.bootstrap,common,mysql,oracle,o
+ rg.mybatis.generator.ant,org.mybatis.generator.api,org.mybatis.genera
+ tor.api.dom,org.mybatis.generator.api.dom.java,org.mybatis.generator.
+ api.dom.xml,org.mybatis.generator.codegen,org.mybatis.generator.codeg
+ en.ibatis2,org.mybatis.generator.codegen.ibatis2.dao,org.mybatis.gene
+ rator.codegen.ibatis2.dao.elements,org.mybatis.generator.codegen.ibat
+ is2.dao.templates,org.mybatis.generator.codegen.ibatis2.model,org.myb
+ atis.generator.codegen.ibatis2.sqlmap,org.mybatis.generator.codegen.i
+ batis2.sqlmap.elements,org.mybatis.generator.codegen.mybatis3,org.myb
+ atis.generator.codegen.mybatis3.javamapper,org.mybatis.generator.code
+ gen.mybatis3.javamapper.elements,org.mybatis.generator.codegen.mybati
+ s3.javamapper.elements.annotated,org.mybatis.generator.codegen.mybati
+ s3.javamapper.elements.sqlprovider,org.mybatis.generator.codegen.myba
+ tis3.model,org.mybatis.generator.codegen.mybatis3.xmlmapper,org.mybat
+ is.generator.codegen.mybatis3.xmlmapper.elements,org.mybatis.generato
+ r.config,org.mybatis.generator.config.xml,org.mybatis.generator.excep
+ tion,org.mybatis.generator.internal,org.mybatis.generator.internal.db
+ ,org.mybatis.generator.internal.rules,org.mybatis.generator.internal.
+ types,org.mybatis.generator.internal.util,org.mybatis.generator.inter
+ nal.util.messages,org.mybatis.generator.logging,org.mybatis.generator
+ .plugins
+X-Compile-Source-JDK: 1.6
+Build-Jdk: 1.7.0_75
+Specification-Version: 0.0.1-SNAPSHOT
+Implementation-URL: http://maven.apache.org
+Created-By: Apache Maven Bundle Plugin
+

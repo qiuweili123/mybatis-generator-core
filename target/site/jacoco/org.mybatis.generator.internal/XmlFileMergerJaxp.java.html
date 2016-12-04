@@ -1,0 +1,233 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="zh"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>XmlFileMergerJaxp.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">MyBatis Generator Core</a> &gt; <a href="index.source.html" class="el_package">org.mybatis.generator.internal</a> &gt; <span class="el_source">XmlFileMergerJaxp.java</span></div><h1>XmlFileMergerJaxp.java</h1><pre class="source lang-java linenums">/**
+ * Copyright 2006-2016 the original author or authors.
+ * &lt;p&gt;
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * &lt;p&gt;
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * &lt;p&gt;
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package org.mybatis.generator.internal;
+
+import org.mybatis.generator.api.GeneratedXmlFile;
+import org.mybatis.generator.config.MergeConstants;
+import org.mybatis.generator.exception.ShellException;
+import org.w3c.dom.*;
+import org.xml.sax.EntityResolver;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import java.io.*;
+import java.util.ArrayList;
+import java.util.List;
+
+import static org.mybatis.generator.internal.util.messages.Messages.getString;
+
+/**
+ * This class handles the task of merging changes into an existing XML file.
+ *
+ * @author Jeff Butler
+ */
+public class XmlFileMergerJaxp {
+    /**
+     * Utility class - no instances allowed
+     */
+    private XmlFileMergerJaxp() {
+<span class="nc" id="L45">        super();</span>
+<span class="nc" id="L46">    }</span>
+
+    public static String getMergedSource(GeneratedXmlFile generatedXmlFile,
+                                         File existingFile) throws ShellException {
+
+        try {
+<span class="nc" id="L52">            return getMergedSource(new InputSource(new StringReader(generatedXmlFile.getFormattedContent())),</span>
+                    new InputSource(new InputStreamReader(new FileInputStream(existingFile), &quot;UTF-8&quot;)), //$NON-NLS-1$
+                    existingFile.getName());
+<span class="nc" id="L55">        } catch (IOException e) {</span>
+<span class="nc" id="L56">            throw new ShellException(getString(&quot;Warning.13&quot;, //$NON-NLS-1$</span>
+                    existingFile.getName()), e);
+<span class="nc" id="L58">        } catch (SAXException e) {</span>
+<span class="nc" id="L59">            throw new ShellException(getString(&quot;Warning.13&quot;, //$NON-NLS-1$</span>
+                    existingFile.getName()), e);
+<span class="nc" id="L61">        } catch (ParserConfigurationException e) {</span>
+<span class="nc" id="L62">            throw new ShellException(getString(&quot;Warning.13&quot;, //$NON-NLS-1$</span>
+                    existingFile.getName()), e);
+        }
+    }
+
+    public static String getMergedSource(InputSource newFile,
+                                         InputSource existingFile, String existingFileName) throws IOException, SAXException,
+            ParserConfigurationException, ShellException {
+
+<span class="nc" id="L71">        DocumentBuilderFactory factory = DocumentBuilderFactory</span>
+                .newInstance();
+<span class="nc" id="L73">        factory.setExpandEntityReferences(false);</span>
+<span class="nc" id="L74">        DocumentBuilder builder = factory.newDocumentBuilder();</span>
+<span class="nc" id="L75">        builder.setEntityResolver(new NullEntityResolver());</span>
+
+<span class="nc" id="L77">        Document existingDocument = builder.parse(existingFile);</span>
+<span class="nc" id="L78">        Document newDocument = builder.parse(newFile);</span>
+
+<span class="nc" id="L80">        DocumentType newDocType = newDocument.getDoctype();</span>
+<span class="nc" id="L81">        DocumentType existingDocType = existingDocument.getDoctype();</span>
+
+<span class="nc bnc" id="L83" title="All 2 branches missed.">        if (!newDocType.getName().equals(existingDocType.getName())) {</span>
+<span class="nc" id="L84">            throw new ShellException(getString(&quot;Warning.12&quot;, //$NON-NLS-1$</span>
+                    existingFileName));
+        }
+
+<span class="nc" id="L88">        Element existingRootElement = existingDocument.getDocumentElement();</span>
+<span class="nc" id="L89">        Element newRootElement = newDocument.getDocumentElement();</span>
+
+        // reconcile the root element attributes -
+        // take all attributes from the new element and add to the existing
+        // element
+
+        // remove all attributes from the existing root element
+<span class="nc" id="L96">        NamedNodeMap attributes = existingRootElement.getAttributes();</span>
+<span class="nc" id="L97">        int attributeCount = attributes.getLength();</span>
+<span class="nc bnc" id="L98" title="All 2 branches missed.">        for (int i = attributeCount - 1; i &gt;= 0; i--) {</span>
+<span class="nc" id="L99">            Node node = attributes.item(i);</span>
+<span class="nc" id="L100">            existingRootElement.removeAttribute(node.getNodeName());</span>
+        }
+
+        // add attributes from the new root node to the old root node
+<span class="nc" id="L104">        attributes = newRootElement.getAttributes();</span>
+<span class="nc" id="L105">        attributeCount = attributes.getLength();</span>
+<span class="nc bnc" id="L106" title="All 2 branches missed.">        for (int i = 0; i &lt; attributeCount; i++) {</span>
+<span class="nc" id="L107">            Node node = attributes.item(i);</span>
+<span class="nc" id="L108">            existingRootElement.setAttribute(node.getNodeName(), node</span>
+                    .getNodeValue());
+        }
+
+        // remove the old generated elements and any
+        // white space before the old nodes
+<span class="nc" id="L114">        List&lt;Node&gt; nodesToDelete = new ArrayList&lt;Node&gt;();</span>
+<span class="nc" id="L115">        NodeList children = existingRootElement.getChildNodes();</span>
+<span class="nc" id="L116">        int length = children.getLength();</span>
+<span class="nc bnc" id="L117" title="All 2 branches missed.">        for (int i = 0; i &lt; length; i++) {</span>
+<span class="nc" id="L118">            Node node = children.item(i);</span>
+<span class="nc bnc" id="L119" title="All 2 branches missed.">            if (isGeneratedNode(node)) {</span>
+<span class="nc" id="L120">                nodesToDelete.add(node);</span>
+<span class="nc bnc" id="L121" title="All 4 branches missed.">            } else if (isWhiteSpace(node)</span>
+                    &amp;&amp; isGeneratedNode(children.item(i + 1))) {
+<span class="nc" id="L123">                nodesToDelete.add(node);</span>
+            }
+        }
+
+<span class="nc bnc" id="L127" title="All 2 branches missed.">        for (Node node : nodesToDelete) {</span>
+<span class="nc" id="L128">            existingRootElement.removeChild(node);</span>
+<span class="nc" id="L129">        }</span>
+
+        // add the new generated elements
+<span class="nc" id="L132">        children = newRootElement.getChildNodes();</span>
+<span class="nc" id="L133">        length = children.getLength();</span>
+<span class="nc" id="L134">        Node firstChild = existingRootElement.getFirstChild();</span>
+<span class="nc bnc" id="L135" title="All 2 branches missed.">        for (int i = 0; i &lt; length; i++) {</span>
+<span class="nc" id="L136">            Node node = children.item(i);</span>
+            // don't add the last node if it is only white space
+<span class="nc bnc" id="L138" title="All 4 branches missed.">            if (i == length - 1 &amp;&amp; isWhiteSpace(node)) {</span>
+<span class="nc" id="L139">                break;</span>
+            }
+
+<span class="nc" id="L142">            Node newNode = existingDocument.importNode(node, true);</span>
+<span class="nc bnc" id="L143" title="All 2 branches missed.">            if (firstChild == null) {</span>
+<span class="nc" id="L144">                existingRootElement.appendChild(newNode);</span>
+            } else {
+<span class="nc" id="L146">                existingRootElement.insertBefore(newNode, firstChild);</span>
+            }
+        }
+
+        // pretty print the result
+<span class="nc" id="L151">        return prettyPrint(existingDocument);</span>
+    }
+
+    private static String prettyPrint(Document document) throws ShellException {
+<span class="nc" id="L155">        DomWriter dw = new DomWriter();</span>
+<span class="nc" id="L156">        String s = dw.toString(document);</span>
+<span class="nc" id="L157">        return s;</span>
+    }
+
+    private static boolean isGeneratedNode(Node node) {
+<span class="nc" id="L161">        boolean rc = false;</span>
+
+<span class="nc bnc" id="L163" title="All 4 branches missed.">        if (node != null &amp;&amp; node.getNodeType() == Node.ELEMENT_NODE) {</span>
+<span class="nc" id="L164">            Element element = (Element) node;</span>
+<span class="nc" id="L165">            String id = element.getAttribute(&quot;id&quot;); //$NON-NLS-1$</span>
+<span class="nc bnc" id="L166" title="All 2 branches missed.">            if (id != null) {</span>
+<span class="nc bnc" id="L167" title="All 2 branches missed.">                for (String prefix : MergeConstants.OLD_XML_ELEMENT_PREFIXES) {</span>
+<span class="nc bnc" id="L168" title="All 2 branches missed.">                    if (id.startsWith(prefix)) {</span>
+<span class="nc" id="L169">                        rc = true;</span>
+<span class="nc" id="L170">                        break;</span>
+                    }
+                }
+            }
+
+<span class="nc bnc" id="L175" title="All 2 branches missed.">            if (rc == false) {</span>
+                // check for new node format - if the first non-whitespace node
+                // is an XML comment, and the comment includes
+                // one of the old element tags,
+                // then it is a generated node
+<span class="nc" id="L180">                NodeList children = node.getChildNodes();</span>
+<span class="nc" id="L181">                int length = children.getLength();</span>
+<span class="nc bnc" id="L182" title="All 2 branches missed.">                for (int i = 0; i &lt; length; i++) {</span>
+<span class="nc" id="L183">                    Node childNode = children.item(i);</span>
+<span class="nc bnc" id="L184" title="All 2 branches missed.">                    if (isWhiteSpace(childNode)) {</span>
+<span class="nc" id="L185">                        continue;</span>
+<span class="nc bnc" id="L186" title="All 2 branches missed.">                    } else if (childNode.getNodeType() == Node.COMMENT_NODE) {</span>
+<span class="nc" id="L187">                        Comment comment = (Comment) childNode;</span>
+<span class="nc" id="L188">                        String commentData = comment.getData();</span>
+<span class="nc bnc" id="L189" title="All 2 branches missed.">                        for (String tag : MergeConstants.OLD_ELEMENT_TAGS) {</span>
+<span class="nc bnc" id="L190" title="All 2 branches missed.">                            if (commentData.contains(tag)) {</span>
+<span class="nc" id="L191">                                rc = true;</span>
+<span class="nc" id="L192">                                break;</span>
+                            }
+                        }
+                    } else {
+                        break;
+                    }
+                }
+            }
+        }
+
+<span class="nc" id="L202">        return rc;</span>
+    }
+
+    private static boolean isWhiteSpace(Node node) {
+<span class="nc" id="L206">        boolean rc = false;</span>
+
+<span class="nc bnc" id="L208" title="All 4 branches missed.">        if (node != null &amp;&amp; node.getNodeType() == Node.TEXT_NODE) {</span>
+<span class="nc" id="L209">            Text tn = (Text) node;</span>
+<span class="nc bnc" id="L210" title="All 2 branches missed.">            if (tn.getData().trim().length() == 0) {</span>
+<span class="nc" id="L211">                rc = true;</span>
+            }
+        }
+
+<span class="nc" id="L215">        return rc;</span>
+    }
+
+<span class="nc" id="L218">    private static class NullEntityResolver implements EntityResolver {</span>
+        /**
+         * returns an empty reader. This is done so that the parser doesn't
+         * attempt to read a DTD. We don't need that support for the merge and
+         * it can cause problems on systems that aren't Internet connected.
+         */
+        public InputSource resolveEntity(String publicId, String systemId)
+                throws SAXException, IOException {
+
+<span class="nc" id="L227">            StringReader sr = new StringReader(&quot;&quot;); //$NON-NLS-1$</span>
+
+<span class="nc" id="L229">            return new InputSource(sr);</span>
+        }
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.7.201606060606</span></div></body></html>

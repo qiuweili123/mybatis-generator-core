@@ -1,0 +1,308 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="zh"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>IntrospectedTableMyBatis3Impl.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">MyBatis Generator Core</a> &gt; <a href="index.source.html" class="el_package">org.mybatis.generator.codegen.mybatis3</a> &gt; <span class="el_source">IntrospectedTableMyBatis3Impl.java</span></div><h1>IntrospectedTableMyBatis3Impl.java</h1><pre class="source lang-java linenums">/**
+ * Copyright 2006-2016 the original author or authors.
+ * &lt;p&gt;
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * &lt;p&gt;
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * &lt;p&gt;
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package org.mybatis.generator.codegen.mybatis3;
+
+import org.mybatis.generator.api.GeneratedJavaFile;
+import org.mybatis.generator.api.GeneratedXmlFile;
+import org.mybatis.generator.api.IntrospectedTable;
+import org.mybatis.generator.api.ProgressCallback;
+import org.mybatis.generator.api.dom.java.CompilationUnit;
+import org.mybatis.generator.api.dom.xml.Document;
+import org.mybatis.generator.codegen.AbstractGenerator;
+import org.mybatis.generator.codegen.AbstractJavaClientGenerator;
+import org.mybatis.generator.codegen.AbstractJavaGenerator;
+import org.mybatis.generator.codegen.AbstractXmlGenerator;
+import org.mybatis.generator.codegen.mybatis3.javamapper.AnnotatedClientGenerator;
+import org.mybatis.generator.codegen.mybatis3.javamapper.JavaMapperGenerator;
+import org.mybatis.generator.codegen.mybatis3.javamapper.MixedClientGenerator;
+import org.mybatis.generator.codegen.mybatis3.model.BaseRecordGenerator;
+import org.mybatis.generator.codegen.mybatis3.model.ExampleGenerator;
+import org.mybatis.generator.codegen.mybatis3.model.PrimaryKeyGenerator;
+import org.mybatis.generator.codegen.mybatis3.model.RecordWithBLOBsGenerator;
+import org.mybatis.generator.codegen.mybatis3.xmlmapper.XMLMapperGenerator;
+import org.mybatis.generator.config.PropertyRegistry;
+import org.mybatis.generator.internal.ObjectFactory;
+
+import java.util.ArrayList;
+import java.util.List;
+
+/**
+ * The Class IntrospectedTableMyBatis3Impl.
+ *
+ * @author Jeff Butler
+ */
+public class IntrospectedTableMyBatis3Impl extends IntrospectedTable {
+
+    /**
+     * The java model generators.
+     */
+    protected List&lt;AbstractJavaGenerator&gt; javaModelGenerators;
+
+    /**
+     * The client generators.
+     */
+    protected List&lt;AbstractJavaGenerator&gt; clientGenerators;
+
+    /**
+     * The xml mapper generator.
+     */
+    protected AbstractXmlGenerator xmlMapperGenerator;
+
+    /**
+     * Instantiates a new introspected table my batis3 impl.
+     */
+    public IntrospectedTableMyBatis3Impl() {
+<span class="nc" id="L68">        super(TargetRuntime.MYBATIS3);</span>
+<span class="nc" id="L69">        javaModelGenerators = new ArrayList&lt;AbstractJavaGenerator&gt;();</span>
+<span class="nc" id="L70">        clientGenerators = new ArrayList&lt;AbstractJavaGenerator&gt;();</span>
+<span class="nc" id="L71">    }</span>
+
+    /* (non-Javadoc)
+     * @see org.mybatis.generator.api.IntrospectedTable#calculateGenerators(java.util.List, org.mybatis.generator.api.ProgressCallback)
+     */
+    @Override
+    public void calculateGenerators(List&lt;String&gt; warnings,
+                                    ProgressCallback progressCallback) {
+<span class="nc" id="L79">        calculateJavaModelGenerators(warnings, progressCallback);</span>
+
+<span class="nc" id="L81">        AbstractJavaClientGenerator javaClientGenerator =</span>
+                calculateClientGenerators(warnings, progressCallback);
+
+<span class="nc" id="L84">        calculateXmlMapperGenerator(javaClientGenerator, warnings, progressCallback);</span>
+<span class="nc" id="L85">    }</span>
+
+    /**
+     * Calculate xml mapper generator.
+     *
+     * @param javaClientGenerator the java client generator
+     * @param warnings            the warnings
+     * @param progressCallback    the progress callback
+     */
+    protected void calculateXmlMapperGenerator(AbstractJavaClientGenerator javaClientGenerator,
+                                               List&lt;String&gt; warnings,
+                                               ProgressCallback progressCallback) {
+<span class="nc bnc" id="L97" title="All 2 branches missed.">        if (javaClientGenerator == null) {</span>
+<span class="nc bnc" id="L98" title="All 2 branches missed.">            if (context.getSqlMapGeneratorConfiguration() != null) {</span>
+<span class="nc" id="L99">                xmlMapperGenerator = new XMLMapperGenerator();</span>
+            }
+        } else {
+<span class="nc" id="L102">            xmlMapperGenerator = javaClientGenerator.getMatchedXMLGenerator();</span>
+        }
+
+<span class="nc" id="L105">        initializeAbstractGenerator(xmlMapperGenerator, warnings,</span>
+                progressCallback);
+<span class="nc" id="L107">    }</span>
+
+    /**
+     * Calculate client generators.
+     *
+     * @param warnings         the warnings
+     * @param progressCallback the progress callback
+     * @return true if an XML generator is required
+     */
+    protected AbstractJavaClientGenerator calculateClientGenerators(List&lt;String&gt; warnings,
+                                                                    ProgressCallback progressCallback) {
+<span class="nc bnc" id="L118" title="All 2 branches missed.">        if (!rules.generateJavaClient()) {</span>
+<span class="nc" id="L119">            return null;</span>
+        }
+
+<span class="nc" id="L122">        AbstractJavaClientGenerator javaGenerator = createJavaClientGenerator();</span>
+<span class="nc bnc" id="L123" title="All 2 branches missed.">        if (javaGenerator == null) {</span>
+<span class="nc" id="L124">            return null;</span>
+        }
+
+<span class="nc" id="L127">        initializeAbstractGenerator(javaGenerator, warnings, progressCallback);</span>
+<span class="nc" id="L128">        clientGenerators.add(javaGenerator);</span>
+
+<span class="nc" id="L130">        return javaGenerator;</span>
+    }
+
+    /**
+     * Creates the java client generator.
+     *
+     * @return the abstract java client generator
+     */
+    protected AbstractJavaClientGenerator createJavaClientGenerator() {
+<span class="nc bnc" id="L139" title="All 2 branches missed.">        if (context.getJavaClientGeneratorConfiguration() == null) {</span>
+<span class="nc" id="L140">            return null;</span>
+        }
+
+<span class="nc" id="L143">        String type = context.getJavaClientGeneratorConfiguration()</span>
+                .getConfigurationType();
+
+        AbstractJavaClientGenerator javaGenerator;
+<span class="nc bnc" id="L147" title="All 2 branches missed.">        if (&quot;XMLMAPPER&quot;.equalsIgnoreCase(type)) { //$NON-NLS-1$</span>
+<span class="nc" id="L148">            javaGenerator = new JavaMapperGenerator();</span>
+<span class="nc bnc" id="L149" title="All 2 branches missed.">        } else if (&quot;MIXEDMAPPER&quot;.equalsIgnoreCase(type)) { //$NON-NLS-1$</span>
+<span class="nc" id="L150">            javaGenerator = new MixedClientGenerator();</span>
+<span class="nc bnc" id="L151" title="All 2 branches missed.">        } else if (&quot;ANNOTATEDMAPPER&quot;.equalsIgnoreCase(type)) { //$NON-NLS-1$</span>
+<span class="nc" id="L152">            javaGenerator = new AnnotatedClientGenerator();</span>
+<span class="nc bnc" id="L153" title="All 2 branches missed.">        } else if (&quot;MAPPER&quot;.equalsIgnoreCase(type)) { //$NON-NLS-1$</span>
+<span class="nc" id="L154">            javaGenerator = new JavaMapperGenerator();</span>
+        } else {
+<span class="nc" id="L156">            javaGenerator = (AbstractJavaClientGenerator) ObjectFactory</span>
+                    .createInternalObject(type);
+        }
+
+<span class="nc" id="L160">        return javaGenerator;</span>
+    }
+
+    /**
+     * Calculate java model generators.
+     *
+     * @param warnings         the warnings
+     * @param progressCallback the progress callback
+     */
+    protected void calculateJavaModelGenerators(List&lt;String&gt; warnings,
+                                                ProgressCallback progressCallback) {
+<span class="nc bnc" id="L171" title="All 2 branches missed.">        if (getRules().generateExampleClass()) {</span>
+<span class="nc" id="L172">            AbstractJavaGenerator javaGenerator = new ExampleGenerator();</span>
+<span class="nc" id="L173">            initializeAbstractGenerator(javaGenerator, warnings,</span>
+                    progressCallback);
+<span class="nc" id="L175">            javaModelGenerators.add(javaGenerator);</span>
+        }
+
+<span class="nc bnc" id="L178" title="All 2 branches missed.">        if (getRules().generatePrimaryKeyClass()) {</span>
+<span class="nc" id="L179">            AbstractJavaGenerator javaGenerator = new PrimaryKeyGenerator();</span>
+<span class="nc" id="L180">            initializeAbstractGenerator(javaGenerator, warnings,</span>
+                    progressCallback);
+<span class="nc" id="L182">            javaModelGenerators.add(javaGenerator);</span>
+        }
+
+<span class="nc bnc" id="L185" title="All 2 branches missed.">        if (getRules().generateBaseRecordClass()) {</span>
+<span class="nc" id="L186">            AbstractJavaGenerator javaGenerator = new BaseRecordGenerator();</span>
+<span class="nc" id="L187">            initializeAbstractGenerator(javaGenerator, warnings,</span>
+                    progressCallback);
+<span class="nc" id="L189">            javaModelGenerators.add(javaGenerator);</span>
+        }
+
+<span class="nc bnc" id="L192" title="All 2 branches missed.">        if (getRules().generateRecordWithBLOBsClass()) {</span>
+<span class="nc" id="L193">            AbstractJavaGenerator javaGenerator = new RecordWithBLOBsGenerator();</span>
+<span class="nc" id="L194">            initializeAbstractGenerator(javaGenerator, warnings,</span>
+                    progressCallback);
+<span class="nc" id="L196">            javaModelGenerators.add(javaGenerator);</span>
+        }
+<span class="nc" id="L198">    }</span>
+
+    /**
+     * Initialize abstract generator.
+     *
+     * @param abstractGenerator the abstract generator
+     * @param warnings          the warnings
+     * @param progressCallback  the progress callback
+     */
+    protected void initializeAbstractGenerator(
+            AbstractGenerator abstractGenerator, List&lt;String&gt; warnings,
+            ProgressCallback progressCallback) {
+<span class="nc bnc" id="L210" title="All 2 branches missed.">        if (abstractGenerator == null) {</span>
+<span class="nc" id="L211">            return;</span>
+        }
+
+<span class="nc" id="L214">        abstractGenerator.setContext(context);</span>
+<span class="nc" id="L215">        abstractGenerator.setIntrospectedTable(this);</span>
+<span class="nc" id="L216">        abstractGenerator.setProgressCallback(progressCallback);</span>
+<span class="nc" id="L217">        abstractGenerator.setWarnings(warnings);</span>
+<span class="nc" id="L218">    }</span>
+
+    /**
+     * 处理JavaGenerators文件
+     *
+     * @param javaGenerators
+     * @param answer
+     * @param targetProject
+     */
+    private void handleJavaGenerators(List&lt;AbstractJavaGenerator&gt; javaGenerators, List&lt;GeneratedJavaFile&gt; answer, String targetProject) {
+<span class="nc bnc" id="L228" title="All 2 branches missed.">        for (AbstractJavaGenerator javaGenerator : javaGenerators) {</span>
+<span class="nc" id="L229">            List&lt;CompilationUnit&gt; compilationUnits = javaGenerator.getCompilationUnits();</span>
+<span class="nc bnc" id="L230" title="All 2 branches missed.">            for (CompilationUnit compilationUnit : compilationUnits) {</span>
+<span class="nc" id="L231">                GeneratedJavaFile gjf = new GeneratedJavaFile(compilationUnit, targetProject,</span>
+                        context.getProperty(PropertyRegistry.CONTEXT_JAVA_FILE_ENCODING),
+                        context.getJavaFormatter());
+<span class="nc" id="L234">                answer.add(gjf);</span>
+<span class="nc" id="L235">            }</span>
+<span class="nc" id="L236">        }</span>
+<span class="nc" id="L237">    }</span>
+
+    /* (non-Javadoc)
+     * @see org.mybatis.generator.api.IntrospectedTable#getGeneratedJavaFiles()
+     */
+    @Override
+    public List&lt;GeneratedJavaFile&gt; getGeneratedJavaFiles() {
+<span class="nc" id="L244">        List&lt;GeneratedJavaFile&gt; answer = new ArrayList&lt;GeneratedJavaFile&gt;();</span>
+
+        // 实体类文件
+<span class="nc" id="L247">        handleJavaGenerators(javaModelGenerators, answer, context.getJavaModelGeneratorConfiguration().getTargetProject());</span>
+
+        // mapper文件
+<span class="nc" id="L250">        handleJavaGenerators(clientGenerators, answer, context.getJavaClientGeneratorConfiguration().getTargetProject());</span>
+
+<span class="nc" id="L252">        return answer;</span>
+    }
+
+    /* (non-Javadoc)
+     * @see org.mybatis.generator.api.IntrospectedTable#getGeneratedXmlFiles()
+     */
+    @Override
+    public List&lt;GeneratedXmlFile&gt; getGeneratedXmlFiles() {
+<span class="nc" id="L260">        List&lt;GeneratedXmlFile&gt; answer = new ArrayList&lt;GeneratedXmlFile&gt;();</span>
+
+<span class="nc bnc" id="L262" title="All 2 branches missed.">        if (xmlMapperGenerator != null) {</span>
+<span class="nc" id="L263">            Document document = xmlMapperGenerator.getDocument();</span>
+<span class="nc" id="L264">            GeneratedXmlFile gxf = new GeneratedXmlFile(document,</span>
+                    getMyBatis3XmlMapperFileName(), getMyBatis3XmlMapperPackage(),
+                    context.getSqlMapGeneratorConfiguration().getTargetProject(),
+                    true, context.getXmlFormatter());
+<span class="nc bnc" id="L268" title="All 2 branches missed.">            if (context.getPlugins().sqlMapGenerated(gxf, this)) {</span>
+<span class="nc" id="L269">                answer.add(gxf);</span>
+            }
+        }
+
+<span class="nc" id="L273">        return answer;</span>
+    }
+
+    /* (non-Javadoc)
+     * @see org.mybatis.generator.api.IntrospectedTable#getGenerationSteps()
+     */
+    @Override
+    public int getGenerationSteps() {
+<span class="nc bnc" id="L281" title="All 2 branches missed.">        return javaModelGenerators.size() + clientGenerators.size() +</span>
+                (xmlMapperGenerator == null ? 0 : 1);
+    }
+
+    /* (non-Javadoc)
+     * @see org.mybatis.generator.api.IntrospectedTable#isJava5Targeted()
+     */
+    @Override
+    public boolean isJava5Targeted() {
+<span class="nc" id="L290">        return true;</span>
+    }
+
+    /* (non-Javadoc)
+     * @see org.mybatis.generator.api.IntrospectedTable#requiresXMLGenerator()
+     */
+    @Override
+    public boolean requiresXMLGenerator() {
+<span class="nc" id="L298">        AbstractJavaClientGenerator javaClientGenerator =</span>
+                createJavaClientGenerator();
+
+<span class="nc bnc" id="L301" title="All 2 branches missed.">        if (javaClientGenerator == null) {</span>
+<span class="nc" id="L302">            return false;</span>
+        } else {
+<span class="nc" id="L304">            return javaClientGenerator.requiresXMLGenerator();</span>
+        }
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.7.201606060606</span></div></body></html>

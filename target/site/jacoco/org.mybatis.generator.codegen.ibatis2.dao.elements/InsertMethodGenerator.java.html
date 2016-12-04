@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="zh"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>InsertMethodGenerator.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">MyBatis Generator Core</a> &gt; <a href="index.source.html" class="el_package">org.mybatis.generator.codegen.ibatis2.dao.elements</a> &gt; <span class="el_source">InsertMethodGenerator.java</span></div><h1>InsertMethodGenerator.java</h1><pre class="source lang-java linenums">/**
+ * Copyright 2006-2016 the original author or authors.
+ * &lt;p&gt;
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * &lt;p&gt;
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * &lt;p&gt;
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package org.mybatis.generator.codegen.ibatis2.dao.elements;
+
+import org.mybatis.generator.api.DAOMethodNameCalculator;
+import org.mybatis.generator.api.IntrospectedColumn;
+import org.mybatis.generator.api.dom.java.*;
+
+import java.util.Set;
+import java.util.TreeSet;
+
+/**
+ *
+ * @author Jeff Butler
+ *
+ */
+public class InsertMethodGenerator extends AbstractDAOElementGenerator {
+
+    public InsertMethodGenerator() {
+<span class="nc" id="L33">        super();</span>
+<span class="nc" id="L34">    }</span>
+
+    @Override
+    public void addImplementationElements(TopLevelClass topLevelClass) {
+<span class="nc" id="L38">        Set&lt;FullyQualifiedJavaType&gt; importedTypes = new TreeSet&lt;FullyQualifiedJavaType&gt;();</span>
+<span class="nc" id="L39">        Method method = getMethodShell(importedTypes);</span>
+
+<span class="nc" id="L41">        FullyQualifiedJavaType returnType = method.getReturnType();</span>
+
+<span class="nc" id="L43">        StringBuilder sb = new StringBuilder();</span>
+
+<span class="nc bnc" id="L45" title="All 2 branches missed.">        if (returnType != null) {</span>
+<span class="nc" id="L46">            sb.append(&quot;Object newKey = &quot;); //$NON-NLS-1$</span>
+        }
+
+<span class="nc" id="L49">        sb.append(daoTemplate.getInsertMethod(introspectedTable</span>
+                .getIbatis2SqlMapNamespace(), introspectedTable
+                .getInsertStatementId(), &quot;record&quot;)); //$NON-NLS-1$
+<span class="nc" id="L52">        method.addBodyLine(sb.toString());</span>
+
+<span class="nc bnc" id="L54" title="All 2 branches missed.">        if (returnType != null) {</span>
+<span class="nc bnc" id="L55" title="All 2 branches missed.">            if (&quot;Object&quot;.equals(returnType.getShortName())) { //$NON-NLS-1$</span>
+                // no need to cast if the return type is Object
+<span class="nc" id="L57">                method.addBodyLine(&quot;return newKey;&quot;); //$NON-NLS-1$</span>
+            } else {
+<span class="nc" id="L59">                sb.setLength(0);</span>
+
+<span class="nc bnc" id="L61" title="All 2 branches missed.">                if (returnType.isPrimitive()) {</span>
+<span class="nc" id="L62">                    PrimitiveTypeWrapper ptw = returnType</span>
+                            .getPrimitiveTypeWrapper();
+<span class="nc" id="L64">                    sb.append(&quot;return ((&quot;); //$NON-NLS-1$</span>
+<span class="nc" id="L65">                    sb.append(ptw.getShortName());</span>
+<span class="nc" id="L66">                    sb.append(&quot;) newKey&quot;); //$NON-NLS-1$</span>
+<span class="nc" id="L67">                    sb.append(&quot;).&quot;); //$NON-NLS-1$</span>
+<span class="nc" id="L68">                    sb.append(ptw.getToPrimitiveMethod());</span>
+<span class="nc" id="L69">                    sb.append(';');</span>
+<span class="nc" id="L70">                } else {</span>
+<span class="nc" id="L71">                    sb.append(&quot;return (&quot;); //$NON-NLS-1$</span>
+<span class="nc" id="L72">                    sb.append(returnType.getShortName());</span>
+<span class="nc" id="L73">                    sb.append(&quot;) newKey;&quot;); //$NON-NLS-1$</span>
+                }
+
+<span class="nc" id="L76">                method.addBodyLine(sb.toString());</span>
+            }
+        }
+
+<span class="nc bnc" id="L80" title="All 2 branches missed.">        if (context.getPlugins().clientInsertMethodGenerated(method,</span>
+                topLevelClass, introspectedTable)) {
+<span class="nc" id="L82">            topLevelClass.addImportedTypes(importedTypes);</span>
+<span class="nc" id="L83">            topLevelClass.addMethod(method);</span>
+        }
+<span class="nc" id="L85">    }</span>
+
+    @Override
+    public void addInterfaceElements(Interface interfaze) {
+<span class="nc" id="L89">        Set&lt;FullyQualifiedJavaType&gt; importedTypes = new TreeSet&lt;FullyQualifiedJavaType&gt;();</span>
+<span class="nc" id="L90">        Method method = getMethodShell(importedTypes);</span>
+
+<span class="nc bnc" id="L92" title="All 2 branches missed.">        if (context.getPlugins().clientInsertMethodGenerated(method,</span>
+                interfaze, introspectedTable)) {
+<span class="nc" id="L94">            interfaze.addImportedTypes(importedTypes);</span>
+<span class="nc" id="L95">            interfaze.addMethod(method);</span>
+        }
+<span class="nc" id="L97">    }</span>
+
+    private Method getMethodShell(Set&lt;FullyQualifiedJavaType&gt; importedTypes) {
+<span class="nc" id="L100">        Method method = new Method();</span>
+
+        FullyQualifiedJavaType returnType;
+<span class="nc bnc" id="L103" title="All 2 branches missed.">        if (introspectedTable.getGeneratedKey() != null) {</span>
+<span class="nc" id="L104">            IntrospectedColumn introspectedColumn = introspectedTable</span>
+                    .getColumn(introspectedTable.getGeneratedKey().getColumn());
+<span class="nc bnc" id="L106" title="All 2 branches missed.">            if (introspectedColumn == null) {</span>
+                // the specified column doesn't exist, so don't do the generated
+                // key
+                // (the warning has already been reported)
+<span class="nc" id="L110">                returnType = null;</span>
+            } else {
+<span class="nc" id="L112">                returnType = introspectedColumn.getFullyQualifiedJavaType();</span>
+<span class="nc" id="L113">                importedTypes.add(returnType);</span>
+            }
+<span class="nc" id="L115">        } else {</span>
+<span class="nc" id="L116">            returnType = null;</span>
+        }
+
+<span class="nc" id="L119">        method.setReturnType(returnType);</span>
+<span class="nc" id="L120">        method.setVisibility(JavaVisibility.PUBLIC);</span>
+<span class="nc" id="L121">        DAOMethodNameCalculator methodNameCalculator = getDAOMethodNameCalculator();</span>
+<span class="nc" id="L122">        method.setName(methodNameCalculator</span>
+                .getInsertMethodName(introspectedTable));
+
+<span class="nc" id="L125">        FullyQualifiedJavaType parameterType = introspectedTable.getRules()</span>
+                .calculateAllFieldsClass();
+
+<span class="nc" id="L128">        importedTypes.add(parameterType);</span>
+<span class="nc" id="L129">        method.addParameter(new Parameter(parameterType, &quot;record&quot;)); //$NON-NLS-1$</span>
+
+<span class="nc bnc" id="L131" title="All 2 branches missed.">        for (FullyQualifiedJavaType fqjt : daoTemplate.getCheckedExceptions()) {</span>
+<span class="nc" id="L132">            method.addException(fqjt);</span>
+<span class="nc" id="L133">            importedTypes.add(fqjt);</span>
+<span class="nc" id="L134">        }</span>
+
+<span class="nc" id="L136">        context.getCommentGenerator().addGeneralMethodComment(method,</span>
+                introspectedTable);
+
+<span class="nc" id="L139">        return method;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.7.201606060606</span></div></body></html>

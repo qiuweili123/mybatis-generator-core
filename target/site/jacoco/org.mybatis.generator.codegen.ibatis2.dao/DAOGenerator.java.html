@@ -1,0 +1,314 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="zh"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>DAOGenerator.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">MyBatis Generator Core</a> &gt; <a href="index.source.html" class="el_package">org.mybatis.generator.codegen.ibatis2.dao</a> &gt; <span class="el_source">DAOGenerator.java</span></div><h1>DAOGenerator.java</h1><pre class="source lang-java linenums">/**
+ * Copyright 2006-2016 the original author or authors.
+ * &lt;p&gt;
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * &lt;p&gt;
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * &lt;p&gt;
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package org.mybatis.generator.codegen.ibatis2.dao;
+
+import org.mybatis.generator.api.CommentGenerator;
+import org.mybatis.generator.api.FullyQualifiedTable;
+import org.mybatis.generator.api.dom.java.*;
+import org.mybatis.generator.codegen.AbstractJavaClientGenerator;
+import org.mybatis.generator.codegen.AbstractXmlGenerator;
+import org.mybatis.generator.codegen.ibatis2.dao.elements.*;
+import org.mybatis.generator.codegen.ibatis2.dao.templates.AbstractDAOTemplate;
+import org.mybatis.generator.config.PropertyRegistry;
+import org.mybatis.generator.internal.rules.Rules;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import static org.mybatis.generator.internal.util.StringUtility.stringHasValue;
+import static org.mybatis.generator.internal.util.messages.Messages.getString;
+
+/**
+ *
+ * @author Jeff Butler
+ *
+ */
+public class DAOGenerator extends AbstractJavaClientGenerator {
+
+    private AbstractDAOTemplate daoTemplate;
+    private boolean generateForJava5;
+
+    public DAOGenerator(AbstractDAOTemplate daoTemplate,
+                        boolean generateForJava5) {
+<span class="nc" id="L46">        super(true);</span>
+<span class="nc" id="L47">        this.daoTemplate = daoTemplate;</span>
+<span class="nc" id="L48">        this.generateForJava5 = generateForJava5;</span>
+<span class="nc" id="L49">    }</span>
+
+    @Override
+    public List&lt;CompilationUnit&gt; getCompilationUnits() {
+<span class="nc" id="L53">        FullyQualifiedTable table = introspectedTable.getFullyQualifiedTable();</span>
+<span class="nc" id="L54">        progressCallback.startTask(getString(</span>
+                &quot;Progress.14&quot;, table.toString())); //$NON-NLS-1$
+<span class="nc" id="L56">        TopLevelClass topLevelClass = getTopLevelClassShell();</span>
+<span class="nc" id="L57">        Interface interfaze = getInterfaceShell();</span>
+
+<span class="nc" id="L59">        addCountByExampleMethod(topLevelClass, interfaze);</span>
+<span class="nc" id="L60">        addDeleteByExampleMethod(topLevelClass, interfaze);</span>
+<span class="nc" id="L61">        addDeleteByPrimaryKeyMethod(topLevelClass, interfaze);</span>
+<span class="nc" id="L62">        addInsertMethod(topLevelClass, interfaze);</span>
+<span class="nc" id="L63">        addInsertSelectiveMethod(topLevelClass, interfaze);</span>
+<span class="nc" id="L64">        addSelectByExampleWithBLOBsMethod(topLevelClass, interfaze);</span>
+<span class="nc" id="L65">        addSelectByExampleWithoutBLOBsMethod(topLevelClass, interfaze);</span>
+<span class="nc" id="L66">        addSelectByPrimaryKeyMethod(topLevelClass, interfaze);</span>
+<span class="nc" id="L67">        addUpdateByExampleParmsInnerclass(topLevelClass, interfaze);</span>
+<span class="nc" id="L68">        addUpdateByExampleSelectiveMethod(topLevelClass, interfaze);</span>
+<span class="nc" id="L69">        addUpdateByExampleWithBLOBsMethod(topLevelClass, interfaze);</span>
+<span class="nc" id="L70">        addUpdateByExampleWithoutBLOBsMethod(topLevelClass, interfaze);</span>
+<span class="nc" id="L71">        addUpdateByPrimaryKeySelectiveMethod(topLevelClass, interfaze);</span>
+<span class="nc" id="L72">        addUpdateByPrimaryKeyWithBLOBsMethod(topLevelClass, interfaze);</span>
+<span class="nc" id="L73">        addUpdateByPrimaryKeyWithoutBLOBsMethod(topLevelClass, interfaze);</span>
+
+<span class="nc" id="L75">        List&lt;CompilationUnit&gt; answer = new ArrayList&lt;CompilationUnit&gt;();</span>
+<span class="nc bnc" id="L76" title="All 2 branches missed.">        if (context.getPlugins().clientGenerated(interfaze,</span>
+                topLevelClass, introspectedTable)) {
+<span class="nc" id="L78">            answer.add(topLevelClass);</span>
+<span class="nc" id="L79">            answer.add(interfaze);</span>
+        }
+
+<span class="nc" id="L82">        return answer;</span>
+    }
+
+    protected TopLevelClass getTopLevelClassShell() {
+<span class="nc" id="L86">        FullyQualifiedJavaType interfaceType = new FullyQualifiedJavaType(</span>
+                introspectedTable.getDAOInterfaceType());
+<span class="nc" id="L88">        FullyQualifiedJavaType implementationType = new FullyQualifiedJavaType(</span>
+                introspectedTable.getDAOImplementationType());
+
+<span class="nc" id="L91">        CommentGenerator commentGenerator = context.getCommentGenerator();</span>
+
+<span class="nc" id="L93">        TopLevelClass answer = new TopLevelClass(implementationType);</span>
+<span class="nc" id="L94">        answer.setVisibility(JavaVisibility.PUBLIC);</span>
+<span class="nc" id="L95">        answer.setSuperClass(daoTemplate.getSuperClass());</span>
+<span class="nc" id="L96">        answer.addImportedType(daoTemplate.getSuperClass());</span>
+<span class="nc" id="L97">        answer.addSuperInterface(interfaceType);</span>
+<span class="nc" id="L98">        answer.addImportedType(interfaceType);</span>
+
+<span class="nc bnc" id="L100" title="All 2 branches missed.">        for (FullyQualifiedJavaType fqjt : daoTemplate</span>
+                .getImplementationImports()) {
+<span class="nc" id="L102">            answer.addImportedType(fqjt);</span>
+<span class="nc" id="L103">        }</span>
+
+<span class="nc" id="L105">        commentGenerator.addJavaFileComment(answer);</span>
+
+        // add constructor from the template
+<span class="nc" id="L108">        answer.addMethod(daoTemplate.getConstructorClone(commentGenerator,</span>
+                implementationType, introspectedTable));
+
+        // add any fields from the template
+<span class="nc bnc" id="L112" title="All 2 branches missed.">        for (Field field : daoTemplate.getFieldClones(commentGenerator,</span>
+                introspectedTable)) {
+<span class="nc" id="L114">            answer.addField(field);</span>
+<span class="nc" id="L115">        }</span>
+
+        // add any methods from the template
+<span class="nc bnc" id="L118" title="All 2 branches missed.">        for (Method method : daoTemplate.getMethodClones(commentGenerator,</span>
+                introspectedTable)) {
+<span class="nc" id="L120">            answer.addMethod(method);</span>
+<span class="nc" id="L121">        }</span>
+
+<span class="nc" id="L123">        return answer;</span>
+    }
+
+    protected Interface getInterfaceShell() {
+<span class="nc" id="L127">        Interface answer = new Interface(new FullyQualifiedJavaType(</span>
+                introspectedTable.getDAOInterfaceType()));
+<span class="nc" id="L129">        answer.setVisibility(JavaVisibility.PUBLIC);</span>
+
+<span class="nc" id="L131">        String rootInterface = introspectedTable</span>
+                .getTableConfigurationProperty(PropertyRegistry.ANY_ROOT_INTERFACE);
+<span class="nc bnc" id="L133" title="All 2 branches missed.">        if (!stringHasValue(rootInterface)) {</span>
+<span class="nc" id="L134">            rootInterface = context.getJavaClientGeneratorConfiguration()</span>
+                    .getProperty(PropertyRegistry.ANY_ROOT_INTERFACE);
+        }
+
+<span class="nc bnc" id="L138" title="All 2 branches missed.">        if (stringHasValue(rootInterface)) {</span>
+<span class="nc" id="L139">            FullyQualifiedJavaType fqjt = new FullyQualifiedJavaType(</span>
+                    rootInterface);
+<span class="nc" id="L141">            answer.addSuperInterface(fqjt);</span>
+<span class="nc" id="L142">            answer.addImportedType(fqjt);</span>
+        }
+
+<span class="nc bnc" id="L145" title="All 2 branches missed.">        for (FullyQualifiedJavaType fqjt : daoTemplate.getInterfaceImports()) {</span>
+<span class="nc" id="L146">            answer.addImportedType(fqjt);</span>
+<span class="nc" id="L147">        }</span>
+
+<span class="nc" id="L149">        context.getCommentGenerator().addJavaFileComment(answer);</span>
+
+<span class="nc" id="L151">        return answer;</span>
+    }
+
+    protected void addCountByExampleMethod(TopLevelClass topLevelClass,
+                                           Interface interfaze) {
+<span class="nc bnc" id="L156" title="All 2 branches missed.">        if (introspectedTable.getRules().generateCountByExample()) {</span>
+<span class="nc" id="L157">            AbstractDAOElementGenerator methodGenerator = new CountByExampleMethodGenerator(</span>
+                    generateForJava5);
+<span class="nc" id="L159">            initializeAndExecuteGenerator(methodGenerator, topLevelClass,</span>
+                    interfaze);
+        }
+<span class="nc" id="L162">    }</span>
+
+    protected void addDeleteByExampleMethod(TopLevelClass topLevelClass,
+                                            Interface interfaze) {
+<span class="nc bnc" id="L166" title="All 2 branches missed.">        if (introspectedTable.getRules().generateDeleteByExample()) {</span>
+<span class="nc" id="L167">            AbstractDAOElementGenerator methodGenerator = new DeleteByExampleMethodGenerator();</span>
+<span class="nc" id="L168">            initializeAndExecuteGenerator(methodGenerator, topLevelClass,</span>
+                    interfaze);
+        }
+<span class="nc" id="L171">    }</span>
+
+    protected void addDeleteByPrimaryKeyMethod(TopLevelClass topLevelClass,
+                                               Interface interfaze) {
+<span class="nc bnc" id="L175" title="All 2 branches missed.">        if (introspectedTable.getRules().generateDeleteByPrimaryKey()) {</span>
+<span class="nc" id="L176">            AbstractDAOElementGenerator methodGenerator = new DeleteByPrimaryKeyMethodGenerator();</span>
+<span class="nc" id="L177">            initializeAndExecuteGenerator(methodGenerator, topLevelClass,</span>
+                    interfaze);
+        }
+<span class="nc" id="L180">    }</span>
+
+    protected void addInsertMethod(TopLevelClass topLevelClass,
+                                   Interface interfaze) {
+<span class="nc bnc" id="L184" title="All 2 branches missed.">        if (introspectedTable.getRules().generateInsert()) {</span>
+<span class="nc" id="L185">            AbstractDAOElementGenerator methodGenerator = new InsertMethodGenerator();</span>
+<span class="nc" id="L186">            initializeAndExecuteGenerator(methodGenerator, topLevelClass,</span>
+                    interfaze);
+        }
+<span class="nc" id="L189">    }</span>
+
+    protected void addInsertSelectiveMethod(TopLevelClass topLevelClass,
+                                            Interface interfaze) {
+<span class="nc bnc" id="L193" title="All 2 branches missed.">        if (introspectedTable.getRules().generateInsertSelective()) {</span>
+<span class="nc" id="L194">            AbstractDAOElementGenerator methodGenerator = new InsertSelectiveMethodGenerator();</span>
+<span class="nc" id="L195">            initializeAndExecuteGenerator(methodGenerator, topLevelClass,</span>
+                    interfaze);
+        }
+<span class="nc" id="L198">    }</span>
+
+    protected void addSelectByExampleWithBLOBsMethod(
+            TopLevelClass topLevelClass, Interface interfaze) {
+<span class="nc bnc" id="L202" title="All 2 branches missed.">        if (introspectedTable.getRules().generateSelectByExampleWithBLOBs()) {</span>
+<span class="nc" id="L203">            AbstractDAOElementGenerator methodGenerator = new SelectByExampleWithBLOBsMethodGenerator(</span>
+                    generateForJava5);
+<span class="nc" id="L205">            initializeAndExecuteGenerator(methodGenerator, topLevelClass,</span>
+                    interfaze);
+        }
+<span class="nc" id="L208">    }</span>
+
+    protected void addSelectByExampleWithoutBLOBsMethod(
+            TopLevelClass topLevelClass, Interface interfaze) {
+<span class="nc bnc" id="L212" title="All 2 branches missed.">        if (introspectedTable.getRules().generateSelectByExampleWithoutBLOBs()) {</span>
+<span class="nc" id="L213">            AbstractDAOElementGenerator methodGenerator = new SelectByExampleWithoutBLOBsMethodGenerator(</span>
+                    generateForJava5);
+<span class="nc" id="L215">            initializeAndExecuteGenerator(methodGenerator, topLevelClass,</span>
+                    interfaze);
+        }
+<span class="nc" id="L218">    }</span>
+
+    protected void addSelectByPrimaryKeyMethod(TopLevelClass topLevelClass,
+                                               Interface interfaze) {
+<span class="nc bnc" id="L222" title="All 2 branches missed.">        if (introspectedTable.getRules().generateSelectByPrimaryKey()) {</span>
+<span class="nc" id="L223">            AbstractDAOElementGenerator methodGenerator = new SelectByPrimaryKeyMethodGenerator();</span>
+<span class="nc" id="L224">            initializeAndExecuteGenerator(methodGenerator, topLevelClass,</span>
+                    interfaze);
+        }
+<span class="nc" id="L227">    }</span>
+
+    protected void addUpdateByExampleParmsInnerclass(
+            TopLevelClass topLevelClass, Interface interfaze) {
+<span class="nc" id="L231">        Rules rules = introspectedTable.getRules();</span>
+<span class="nc bnc" id="L232" title="All 6 branches missed.">        if (rules.generateUpdateByExampleSelective()</span>
+                || rules.generateUpdateByExampleWithBLOBs()
+                || rules.generateUpdateByExampleWithoutBLOBs()) {
+<span class="nc" id="L235">            AbstractDAOElementGenerator methodGenerator = new UpdateByExampleParmsInnerclassGenerator();</span>
+<span class="nc" id="L236">            initializeAndExecuteGenerator(methodGenerator, topLevelClass,</span>
+                    interfaze);
+        }
+<span class="nc" id="L239">    }</span>
+
+    protected void addUpdateByExampleSelectiveMethod(
+            TopLevelClass topLevelClass, Interface interfaze) {
+<span class="nc bnc" id="L243" title="All 2 branches missed.">        if (introspectedTable.getRules().generateUpdateByExampleSelective()) {</span>
+<span class="nc" id="L244">            AbstractDAOElementGenerator methodGenerator = new UpdateByExampleSelectiveMethodGenerator();</span>
+<span class="nc" id="L245">            initializeAndExecuteGenerator(methodGenerator, topLevelClass,</span>
+                    interfaze);
+        }
+<span class="nc" id="L248">    }</span>
+
+    protected void addUpdateByExampleWithBLOBsMethod(
+            TopLevelClass topLevelClass, Interface interfaze) {
+<span class="nc bnc" id="L252" title="All 2 branches missed.">        if (introspectedTable.getRules().generateUpdateByExampleWithBLOBs()) {</span>
+<span class="nc" id="L253">            AbstractDAOElementGenerator methodGenerator = new UpdateByExampleWithBLOBsMethodGenerator();</span>
+<span class="nc" id="L254">            initializeAndExecuteGenerator(methodGenerator, topLevelClass,</span>
+                    interfaze);
+        }
+<span class="nc" id="L257">    }</span>
+
+    protected void addUpdateByExampleWithoutBLOBsMethod(
+            TopLevelClass topLevelClass, Interface interfaze) {
+<span class="nc bnc" id="L261" title="All 2 branches missed.">        if (introspectedTable.getRules().generateUpdateByExampleWithoutBLOBs()) {</span>
+<span class="nc" id="L262">            AbstractDAOElementGenerator methodGenerator = new UpdateByExampleWithoutBLOBsMethodGenerator();</span>
+<span class="nc" id="L263">            initializeAndExecuteGenerator(methodGenerator, topLevelClass,</span>
+                    interfaze);
+        }
+<span class="nc" id="L266">    }</span>
+
+    protected void addUpdateByPrimaryKeySelectiveMethod(
+            TopLevelClass topLevelClass, Interface interfaze) {
+<span class="nc bnc" id="L270" title="All 2 branches missed.">        if (introspectedTable.getRules().generateUpdateByPrimaryKeySelective()) {</span>
+<span class="nc" id="L271">            AbstractDAOElementGenerator methodGenerator = new UpdateByPrimaryKeySelectiveMethodGenerator();</span>
+<span class="nc" id="L272">            initializeAndExecuteGenerator(methodGenerator, topLevelClass,</span>
+                    interfaze);
+        }
+<span class="nc" id="L275">    }</span>
+
+    protected void addUpdateByPrimaryKeyWithBLOBsMethod(
+            TopLevelClass topLevelClass, Interface interfaze) {
+<span class="nc bnc" id="L279" title="All 2 branches missed.">        if (introspectedTable.getRules().generateUpdateByPrimaryKeyWithBLOBs()) {</span>
+<span class="nc" id="L280">            AbstractDAOElementGenerator methodGenerator = new UpdateByPrimaryKeyWithBLOBsMethodGenerator();</span>
+<span class="nc" id="L281">            initializeAndExecuteGenerator(methodGenerator, topLevelClass,</span>
+                    interfaze);
+        }
+<span class="nc" id="L284">    }</span>
+
+    protected void addUpdateByPrimaryKeyWithoutBLOBsMethod(
+            TopLevelClass topLevelClass, Interface interfaze) {
+<span class="nc bnc" id="L288" title="All 2 branches missed.">        if (introspectedTable.getRules()</span>
+                .generateUpdateByPrimaryKeyWithoutBLOBs()) {
+<span class="nc" id="L290">            AbstractDAOElementGenerator methodGenerator = new UpdateByPrimaryKeyWithoutBLOBsMethodGenerator();</span>
+<span class="nc" id="L291">            initializeAndExecuteGenerator(methodGenerator, topLevelClass,</span>
+                    interfaze);
+        }
+<span class="nc" id="L294">    }</span>
+
+    protected void initializeAndExecuteGenerator(
+            AbstractDAOElementGenerator methodGenerator,
+            TopLevelClass topLevelClass, Interface interfaze) {
+<span class="nc" id="L299">        methodGenerator.setDAOTemplate(daoTemplate);</span>
+<span class="nc" id="L300">        methodGenerator.setContext(context);</span>
+<span class="nc" id="L301">        methodGenerator.setIntrospectedTable(introspectedTable);</span>
+<span class="nc" id="L302">        methodGenerator.setProgressCallback(progressCallback);</span>
+<span class="nc" id="L303">        methodGenerator.setWarnings(warnings);</span>
+<span class="nc" id="L304">        methodGenerator.addImplementationElements(topLevelClass);</span>
+<span class="nc" id="L305">        methodGenerator.addInterfaceElements(interfaze);</span>
+<span class="nc" id="L306">    }</span>
+
+    @Override
+    public AbstractXmlGenerator getMatchedXMLGenerator() {
+        // this method is not called for iBATIS2
+<span class="nc" id="L311">        return null;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.7.201606060606</span></div></body></html>

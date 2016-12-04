@@ -1,0 +1,291 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wepiao.bd.sport.dao.AppAccessMapper">
+  <resultMap id="BaseResultMap" type="com.wepiao.bd.sport.bean.AppAccess">
+    <id column="id" jdbcType="VARCHAR" property="id" />
+    <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="is_wepiao" jdbcType="BIT" property="isWepiao" />
+    <result column="validate_start_time" jdbcType="BIGINT" property="validateStartTime" />
+    <result column="validate_end_time" jdbcType="BIGINT" property="validateEndTime" />
+    <result column="business_id" jdbcType="VARCHAR" property="businessId" />
+    <result column="order_sourcce" jdbcType="INTEGER" property="orderSourcce" />
+    <result column="public_key" jdbcType="VARCHAR" property="publicKey" />
+    <result column="api_group_id" jdbcType="CHAR" property="apiGroupId" />
+    <result column="created" jdbcType="INTEGER" property="created" />
+  </resultMap>
+  <sql id="Example_Where_Clause">
+    <where>
+      <foreach collection="oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause">
+    <where>
+      <foreach collection="example.oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List">
+    id, name, is_wepiao, validate_start_time, validate_end_time, business_id, order_sourcce, 
+    public_key, api_group_id, created
+  </sql>
+  <select id="selectByExample" parameterType="com.wepiao.bd.sport.bean.AppAccessCriteria" resultMap="BaseResultMap">
+    select
+    <if test="distinct">
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from app_access
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null">
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from app_access
+    where id = #{id,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+    delete from app_access
+    where id = #{id,jdbcType=VARCHAR}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.wepiao.bd.sport.bean.AppAccessCriteria">
+    delete from app_access
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.wepiao.bd.sport.bean.AppAccess">
+    insert into app_access (id, name, is_wepiao, 
+      validate_start_time, validate_end_time, business_id, 
+      order_sourcce, public_key, api_group_id, 
+      created)
+    values (#{id,jdbcType=VARCHAR}, #{name,jdbcType=VARCHAR}, #{isWepiao,jdbcType=BIT}, 
+      #{validateStartTime,jdbcType=BIGINT}, #{validateEndTime,jdbcType=BIGINT}, #{businessId,jdbcType=VARCHAR}, 
+      #{orderSourcce,jdbcType=INTEGER}, #{publicKey,jdbcType=VARCHAR}, #{apiGroupId,jdbcType=CHAR}, 
+      #{created,jdbcType=INTEGER})
+  </insert>
+  <insert id="insertSelective" parameterType="com.wepiao.bd.sport.bean.AppAccess">
+    insert into app_access
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="name != null">
+        name,
+      </if>
+      <if test="isWepiao != null">
+        is_wepiao,
+      </if>
+      <if test="validateStartTime != null">
+        validate_start_time,
+      </if>
+      <if test="validateEndTime != null">
+        validate_end_time,
+      </if>
+      <if test="businessId != null">
+        business_id,
+      </if>
+      <if test="orderSourcce != null">
+        order_sourcce,
+      </if>
+      <if test="publicKey != null">
+        public_key,
+      </if>
+      <if test="apiGroupId != null">
+        api_group_id,
+      </if>
+      <if test="created != null">
+        created,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=VARCHAR},
+      </if>
+      <if test="name != null">
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="isWepiao != null">
+        #{isWepiao,jdbcType=BIT},
+      </if>
+      <if test="validateStartTime != null">
+        #{validateStartTime,jdbcType=BIGINT},
+      </if>
+      <if test="validateEndTime != null">
+        #{validateEndTime,jdbcType=BIGINT},
+      </if>
+      <if test="businessId != null">
+        #{businessId,jdbcType=VARCHAR},
+      </if>
+      <if test="orderSourcce != null">
+        #{orderSourcce,jdbcType=INTEGER},
+      </if>
+      <if test="publicKey != null">
+        #{publicKey,jdbcType=VARCHAR},
+      </if>
+      <if test="apiGroupId != null">
+        #{apiGroupId,jdbcType=CHAR},
+      </if>
+      <if test="created != null">
+        #{created,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.wepiao.bd.sport.bean.AppAccessCriteria" resultType="java.lang.Long">
+    select count(*) from app_access
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map">
+    update app_access
+    <set>
+      <if test="record.id != null">
+        id = #{record.id,jdbcType=VARCHAR},
+      </if>
+      <if test="record.name != null">
+        name = #{record.name,jdbcType=VARCHAR},
+      </if>
+      <if test="record.isWepiao != null">
+        is_wepiao = #{record.isWepiao,jdbcType=BIT},
+      </if>
+      <if test="record.validateStartTime != null">
+        validate_start_time = #{record.validateStartTime,jdbcType=BIGINT},
+      </if>
+      <if test="record.validateEndTime != null">
+        validate_end_time = #{record.validateEndTime,jdbcType=BIGINT},
+      </if>
+      <if test="record.businessId != null">
+        business_id = #{record.businessId,jdbcType=VARCHAR},
+      </if>
+      <if test="record.orderSourcce != null">
+        order_sourcce = #{record.orderSourcce,jdbcType=INTEGER},
+      </if>
+      <if test="record.publicKey != null">
+        public_key = #{record.publicKey,jdbcType=VARCHAR},
+      </if>
+      <if test="record.apiGroupId != null">
+        api_group_id = #{record.apiGroupId,jdbcType=CHAR},
+      </if>
+      <if test="record.created != null">
+        created = #{record.created,jdbcType=INTEGER},
+      </if>
+    </set>
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map">
+    update app_access
+    set id = #{record.id,jdbcType=VARCHAR},
+      name = #{record.name,jdbcType=VARCHAR},
+      is_wepiao = #{record.isWepiao,jdbcType=BIT},
+      validate_start_time = #{record.validateStartTime,jdbcType=BIGINT},
+      validate_end_time = #{record.validateEndTime,jdbcType=BIGINT},
+      business_id = #{record.businessId,jdbcType=VARCHAR},
+      order_sourcce = #{record.orderSourcce,jdbcType=INTEGER},
+      public_key = #{record.publicKey,jdbcType=VARCHAR},
+      api_group_id = #{record.apiGroupId,jdbcType=CHAR},
+      created = #{record.created,jdbcType=INTEGER}
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.wepiao.bd.sport.bean.AppAccess">
+    update app_access
+    <set>
+      <if test="name != null">
+        name = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="isWepiao != null">
+        is_wepiao = #{isWepiao,jdbcType=BIT},
+      </if>
+      <if test="validateStartTime != null">
+        validate_start_time = #{validateStartTime,jdbcType=BIGINT},
+      </if>
+      <if test="validateEndTime != null">
+        validate_end_time = #{validateEndTime,jdbcType=BIGINT},
+      </if>
+      <if test="businessId != null">
+        business_id = #{businessId,jdbcType=VARCHAR},
+      </if>
+      <if test="orderSourcce != null">
+        order_sourcce = #{orderSourcce,jdbcType=INTEGER},
+      </if>
+      <if test="publicKey != null">
+        public_key = #{publicKey,jdbcType=VARCHAR},
+      </if>
+      <if test="apiGroupId != null">
+        api_group_id = #{apiGroupId,jdbcType=CHAR},
+      </if>
+      <if test="created != null">
+        created = #{created,jdbcType=INTEGER},
+      </if>
+    </set>
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.wepiao.bd.sport.bean.AppAccess">
+    update app_access
+    set name = #{name,jdbcType=VARCHAR},
+      is_wepiao = #{isWepiao,jdbcType=BIT},
+      validate_start_time = #{validateStartTime,jdbcType=BIGINT},
+      validate_end_time = #{validateEndTime,jdbcType=BIGINT},
+      business_id = #{businessId,jdbcType=VARCHAR},
+      order_sourcce = #{orderSourcce,jdbcType=INTEGER},
+      public_key = #{publicKey,jdbcType=VARCHAR},
+      api_group_id = #{apiGroupId,jdbcType=CHAR},
+      created = #{created,jdbcType=INTEGER}
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+</mapper>

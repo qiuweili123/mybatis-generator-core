@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE generatorConfiguration PUBLIC "-//mybatis.org//DTD MyBatis Generator Configuration 1.0//EN" "http://mybatis.org/dtd/mybatis-generator-config_1_0.dtd">
+<generatorConfiguration>
+	<!-- 引入配置文件 -->
+    <properties resource="oracle/oracle.properties"/>
+
+	<!-- 指定数据连接驱动jar地址 -->
+	<classPathEntry location="${jdbc.mybatisGenerator.classPath}" />
+	
+	<!-- 一个数据库一个context -->
+	<context id="oracleContext" targetRuntime="MyBatis3">
+		<property name="autoDelimitKeywords" value="false" />
+		<property name="javaFileEncoding" value="UTF-8" />
+		<property name="javaFormatter" value="org.mybatis.generator.api.dom.DefaultJavaFormatter" />
+		<property name="xmlFormatter" value="org.mybatis.generator.api.dom.DefaultXmlFormatter" />
+		<property name="suppressTypeWarnings" value="true" />
+		
+		<!-- 插件 -->
+		<plugin type="org.mybatis.generator.plugins.EqualsHashCodePlugin"/>
+		<plugin type="org.mybatis.generator.plugins.SerializablePlugin" />
+		<plugin type="org.mybatis.generator.plugins.ToStringPlugin" />
+		<plugin type="org.mybatis.generator.plugins.RenameExampleClassPlugin">
+			<property name="searchString" value="Example$" />
+			<property name="replaceString" value="Criteria" />
+		</plugin>
+
+		<!-- 注释 -->
+		<commentGenerator>
+			<property name="suppressAllComments" value="false" />
+			<property name="addRemarkComments" value="true" />
+			<property name="suppressDate" value="false" />
+			<property name="dateFormat" value="yyyy-MM-dd HH:mm:ss" />
+		</commentGenerator>
+
+		<!--数据库连接的信息：驱动类、连接地址、用户名、密码 -->
+		<jdbcConnection driverClass="${jdbc.oracle.driverClassName}"
+			connectionURL="${jdbc.oracle.url}" 
+			userId="${jdbc.oracle.username}"
+			password="${jdbc.oracle.password}">
+		</jdbcConnection>
+
+		<!-- 类型转换 -->
+		<javaTypeResolver>
+			<property name="forceBigDecimals" value="false" />
+		</javaTypeResolver>
+
+		<!-- 生成实体类的位置 -->
+		<javaModelGenerator targetPackage="orange1438.entity" targetProject="src\main\resources\test">
+			<property name="constructorBased" value="false" />
+			<property name="enableSubPackages" value="true" />
+			<property name="trimStrings" value="true" />
+		</javaModelGenerator>
+
+		<!-- 生成mapper xml文件 -->
+		<sqlMapGenerator targetPackage="orange1438.mapper" targetProject="src\main\resources\test">
+			<property name="enableSubPackages" value="true" />
+		</sqlMapGenerator>
+		
+		<!-- 生成mapper接口 -->
+		<javaClientGenerator type="XMLMAPPER" targetPackage="orange1438.mapper" targetProject="src\main\resources\test">
+			<property name="enableSubPackages" value="true" />
+		</javaClientGenerator>
+
+		<!-- 指定生成的数据库表 -->
+		<table tableName="T_VIDEO" domainObjectName="VideoEntity" />
+	</context>
+</generatorConfiguration>

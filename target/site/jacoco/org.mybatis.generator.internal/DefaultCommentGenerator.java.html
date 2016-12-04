@@ -1,0 +1,526 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="zh"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>DefaultCommentGenerator.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">MyBatis Generator Core</a> &gt; <a href="index.source.html" class="el_package">org.mybatis.generator.internal</a> &gt; <span class="el_source">DefaultCommentGenerator.java</span></div><h1>DefaultCommentGenerator.java</h1><pre class="source lang-java linenums">/**
+ * Copyright 2006-2016 the original author or authors.
+ * &lt;p&gt;
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * &lt;p&gt;
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * &lt;p&gt;
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package org.mybatis.generator.internal;
+
+import static org.mybatis.generator.internal.util.StringUtility.isTrue;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.List;
+import java.util.Properties;
+
+import org.mybatis.generator.api.CommentGenerator;
+import org.mybatis.generator.api.IntrospectedColumn;
+import org.mybatis.generator.api.IntrospectedTable;
+import org.mybatis.generator.api.dom.java.CompilationUnit;
+import org.mybatis.generator.api.dom.java.Field;
+import org.mybatis.generator.api.dom.java.InnerClass;
+import org.mybatis.generator.api.dom.java.InnerEnum;
+import org.mybatis.generator.api.dom.java.JavaElement;
+import org.mybatis.generator.api.dom.java.Method;
+import org.mybatis.generator.api.dom.java.Parameter;
+import org.mybatis.generator.api.dom.java.TopLevelClass;
+import org.mybatis.generator.api.dom.xml.XmlElement;
+import org.mybatis.generator.config.PropertyRegistry;
+import org.mybatis.generator.internal.util.StringUtility;
+
+/**
+ * The Class DefaultCommentGenerator.
+ * 默认的注释的生成
+ *
+ * @author Jeff Butler
+ */
+public class DefaultCommentGenerator implements CommentGenerator {
+
+    /**
+     * The properties.
+     */
+    private Properties properties;
+
+    /**
+     * The suppress date.
+     */
+    private boolean suppressDate;
+
+    /**
+     * The suppress all comments.
+     */
+    private boolean suppressAllComments;
+
+    /**
+     * The addition of table remark's comments.
+     * If suppressAllComments is true, this option is ignored
+     */
+    private boolean addRemarkComments;
+
+    private SimpleDateFormat dateFormat;
+
+    /**
+     * Instantiates a new default comment generator.
+     */
+    public DefaultCommentGenerator() {
+<span class="nc" id="L75">        super();</span>
+<span class="nc" id="L76">        properties = new Properties();</span>
+<span class="nc" id="L77">        suppressDate = false;</span>
+<span class="nc" id="L78">        suppressAllComments = false;</span>
+<span class="nc" id="L79">        addRemarkComments = false;</span>
+<span class="nc" id="L80">    }</span>
+
+    /* (non-Javadoc)
+     * @see org.mybatis.generator.api.CommentGenerator#addJavaFileComment(org.mybatis.generator.api.dom.java.CompilationUnit)
+     */
+    @Override
+    public void addJavaFileComment(CompilationUnit compilationUnit) {
+        // add no file level comments by default
+<span class="nc" id="L88">        compilationUnit.addFileCommentLine(&quot;/* github.com/orange1438 */&quot;);</span>
+<span class="nc" id="L89">    }</span>
+
+    /**
+     * Adds a suitable comment to warn users that the element was generated, and when it was generated.
+     * 删除mapper.xml中的注释
+     *
+     * @param xmlElement the xml element
+     */
+    @Override
+    public void addComment(XmlElement xmlElement) {
+        // add no document level comments by default
+        // 删除mapper.xml中的注释
+<span class="nc" id="L101">    }</span>
+
+    /* (non-Javadoc)
+     * @see org.mybatis.generator.api.CommentGenerator#addRootComment(org.mybatis.generator.api.dom.xml.XmlElement)
+     */
+    @Override
+    public void addRootComment(XmlElement rootElement) {
+        // add no document level comments by default
+<span class="nc" id="L109">    }</span>
+
+    /* (non-Javadoc)
+     * @see org.mybatis.generator.api.CommentGenerator#addConfigurationProperties(java.util.Properties)
+     */
+    @Override
+    public void addConfigurationProperties(Properties properties) {
+<span class="nc" id="L116">        this.properties.putAll(properties);</span>
+
+<span class="nc" id="L118">        suppressDate = isTrue(properties</span>
+                .getProperty(PropertyRegistry.COMMENT_GENERATOR_SUPPRESS_DATE));
+
+<span class="nc" id="L121">        suppressAllComments = isTrue(properties</span>
+                .getProperty(PropertyRegistry.COMMENT_GENERATOR_SUPPRESS_ALL_COMMENTS));
+
+<span class="nc" id="L124">        addRemarkComments = isTrue(properties</span>
+                .getProperty(PropertyRegistry.COMMENT_GENERATOR_ADD_REMARK_COMMENTS));
+
+<span class="nc" id="L127">        String dateFormatString = properties.getProperty(PropertyRegistry.COMMENT_GENERATOR_DATE_FORMAT);</span>
+<span class="nc bnc" id="L128" title="All 2 branches missed.">        if (StringUtility.stringHasValue(dateFormatString)) {</span>
+<span class="nc" id="L129">            dateFormat = new SimpleDateFormat(dateFormatString);</span>
+        }
+<span class="nc" id="L131">    }</span>
+
+    /**
+     * This method adds the custom javadoc tag for. You may do nothing if you do not wish to include the Javadoc tag -
+     * however, if you do not include the Javadoc tag then the Java merge capability of the eclipse plugin will break.
+     *
+     * @param javaElement       the java element
+     * @param markAsDoNotDelete the mark as do not delete
+     */
+    protected void addJavadocTag(JavaElement javaElement,
+                                 boolean markAsDoNotDelete) {
+<span class="nc" id="L142">        StringBuilder sb = new StringBuilder();</span>
+<span class="nc bnc" id="L143" title="All 2 branches missed.">        if (markAsDoNotDelete) {</span>
+<span class="nc" id="L144">            sb.append(&quot; * do_not_delete_during_merge\n&quot;);</span>
+        }
+<span class="nc" id="L146">        sb.append(&quot; * @author orange1438 code generator&quot;);</span>
+<span class="nc" id="L147">        String s = getDateString();</span>
+<span class="nc bnc" id="L148" title="All 2 branches missed.">        if (s != null) {</span>
+<span class="nc" id="L149">            sb.append(&quot;\n * &quot;);</span>
+<span class="nc" id="L150">            sb.append(s);</span>
+        }
+<span class="nc" id="L152">        javaElement.addJavaDocLine(sb.toString());</span>
+<span class="nc" id="L153">    }</span>
+
+    /**
+     * This method returns a formated date string to include in the Javadoc tag
+     * and XML comments. You may return null if you do not want the date in
+     * these documentation elements.
+     *
+     * @return a string representing the current timestamp, or null
+     */
+    protected String getDateString() {
+<span class="nc bnc" id="L163" title="All 2 branches missed.">        if (suppressDate) {</span>
+<span class="nc" id="L164">            return null;</span>
+<span class="nc bnc" id="L165" title="All 2 branches missed.">        } else if (dateFormat != null) {</span>
+<span class="nc" id="L166">            return dateFormat.format(new Date());</span>
+        } else {
+            // 我就喜欢这个格式化，不服自己修改
+<span class="nc" id="L169">            return new SimpleDateFormat(&quot;yyyy-MM-dd HH:mm:ss&quot;).format(new Date());</span>
+        }
+    }
+
+    /**
+     * 我的类注释,用于非实体类Criteria的注释
+     *
+     * @param javaElement
+     */
+    @Override
+    public void addExampleClassComment(JavaElement javaElement) {
+        // * @author Acooly Code Generator
+        // * Date: 2016-04-05 20:12:59
+<span class="nc bnc" id="L182" title="All 2 branches missed.">        if (suppressAllComments) {</span>
+<span class="nc" id="L183">            return;</span>
+        }
+<span class="nc" id="L185">        javaElement.addJavaDocLine(&quot;/**&quot;);</span>
+<span class="nc" id="L186">        javaElement.addJavaDocLine(&quot; * 本文件由 github.com/orange1438/mybatis-generator-core-chinese-annotation1.3.5-chinese-annotation 自动生成&quot;);</span>
+<span class="nc" id="L187">        addJavadocTag(javaElement, false);</span>
+<span class="nc" id="L188">        javaElement.addJavaDocLine(&quot; */&quot;);</span>
+<span class="nc" id="L189">    }</span>
+
+    /* (non-Javadoc)
+     * @see org.mybatis.generator.api.CommentGenerator#addTopLevelClassComment(org.mybatis.generator.api.dom.java.TopLevelClass, org.mybatis.generator.api.IntrospectedTable)
+     */
+    @Override
+    public void addModelClassComment(TopLevelClass topLevelClass,
+                                     IntrospectedTable introspectedTable) {
+        // 添加类注释
+<span class="nc bnc" id="L198" title="All 4 branches missed.">        if (suppressAllComments || !addRemarkComments) {</span>
+<span class="nc" id="L199">            return;</span>
+        }
+
+<span class="nc" id="L202">        topLevelClass.addJavaDocLine(&quot;/**&quot;); //$NON-NLS-1$</span>
+
+<span class="nc" id="L204">        String remarks = introspectedTable.getFullyQualifiedTable().getRemark();</span>
+        // String remarks = introspectedTable.getRemarks();
+<span class="nc bnc" id="L206" title="All 4 branches missed.">        if (addRemarkComments &amp;&amp; StringUtility.stringHasValue(remarks)) {</span>
+<span class="nc" id="L207">            String[] remarkLines = remarks.split(System.getProperty(&quot;line.separator&quot;));  //$NON-NLS-1$</span>
+<span class="nc bnc" id="L208" title="All 2 branches missed.">            for (String remarkLine : remarkLines) {</span>
+<span class="nc" id="L209">                topLevelClass.addJavaDocLine(&quot; * &quot; + remarkLine + &quot; &quot; + introspectedTable.getFullyQualifiedTable());  //$NON-NLS-1$</span>
+            }
+        }
+
+<span class="nc" id="L213">        addJavadocTag(topLevelClass, false);</span>
+
+<span class="nc" id="L215">        topLevelClass.addJavaDocLine(&quot; */&quot;); //$NON-NLS-1$</span>
+<span class="nc" id="L216">    }</span>
+
+    /* (non-Javadoc)
+     * @see org.mybatis.generator.api.CommentGenerator#addEnumComment(org.mybatis.generator.api.dom.java.InnerEnum, org.mybatis.generator.api.IntrospectedTable)
+     */
+    @Override
+    public void addEnumComment(InnerEnum innerEnum,
+                               IntrospectedTable introspectedTable) {
+<span class="nc bnc" id="L224" title="All 2 branches missed.">        if (suppressAllComments) {</span>
+<span class="nc" id="L225">            return;</span>
+        }
+
+<span class="nc" id="L228">        StringBuilder sb = new StringBuilder();</span>
+
+<span class="nc" id="L230">        innerEnum.addJavaDocLine(&quot;/**&quot;); //$NON-NLS-1$</span>
+
+<span class="nc" id="L232">        sb.append(&quot; * This addEnumComment,中文注释自行修改、编译源码&quot;); //$NON-NLS-1$</span>
+<span class="nc" id="L233">        sb.append(introspectedTable.getFullyQualifiedTable());</span>
+<span class="nc" id="L234">        innerEnum.addJavaDocLine(sb.toString());</span>
+
+<span class="nc" id="L236">        addJavadocTag(innerEnum, false);</span>
+
+<span class="nc" id="L238">        innerEnum.addJavaDocLine(&quot; */&quot;); //$NON-NLS-1$</span>
+<span class="nc" id="L239">    }</span>
+
+    /* (non-Javadoc)
+     * @see org.mybatis.generator.api.CommentGenerator#addFieldComment(org.mybatis.generator.api.dom.java.Field, org.mybatis.generator.api.IntrospectedTable, org.mybatis.generator.api.IntrospectedColumn)
+     */
+    @Override
+    public void addFieldComment(Field field,
+                                IntrospectedTable introspectedTable,
+                                IntrospectedColumn introspectedColumn) {
+<span class="nc bnc" id="L248" title="All 2 branches missed.">        if (suppressAllComments) {</span>
+<span class="nc" id="L249">            return;</span>
+        }
+        // 添加字段注释
+<span class="nc" id="L252">        StringBuffer sb = new StringBuffer();</span>
+<span class="nc" id="L253">        boolean defaultFlag = false;</span>
+        //对应表中字段的备注(数据库中自己写的备注信息)
+<span class="nc bnc" id="L255" title="All 4 branches missed.">        if (introspectedColumn.getRemarks() != null</span>
+                &amp;&amp; !introspectedColumn.getRemarks().equals(&quot;&quot;)) {
+<span class="nc" id="L257">            sb.append(&quot; * &quot; + introspectedColumn.getRemarks());</span>
+<span class="nc" id="L258">            defaultFlag = true;</span>
+        }
+<span class="nc bnc" id="L260" title="All 4 branches missed.">        if (introspectedColumn.getDefaultValue() != null</span>
+                &amp;&amp; !introspectedColumn.getDefaultValue().equals(&quot;&quot;)) {
+<span class="nc bnc" id="L262" title="All 2 branches missed.">            if (defaultFlag) {</span>
+<span class="nc" id="L263">                sb.append(&quot;  默认：&quot; + introspectedColumn.getDefaultValue());</span>
+            } else {
+<span class="nc" id="L265">                sb.append(&quot; * 默认：&quot; + introspectedColumn.getDefaultValue());</span>
+            }
+        }
+
+<span class="nc bnc" id="L269" title="All 2 branches missed.">        if (sb.length() &gt; 0) {</span>
+<span class="nc" id="L270">            field.addJavaDocLine(&quot;/** &quot;);</span>
+<span class="nc" id="L271">            field.addJavaDocLine(sb.toString());</span>
+<span class="nc" id="L272">            field.addJavaDocLine(&quot; */&quot;);</span>
+        }
+<span class="nc" id="L274">    }</span>
+
+    /* (non-Javadoc)
+     * @see org.mybatis.generator.api.CommentGenerator#addFieldComment(org.mybatis.generator.api.dom.java.Field, org.mybatis.generator.api.IntrospectedTable)
+     */
+    @Override
+    public void addFieldComment(Field field, IntrospectedTable introspectedTable) {
+<span class="nc bnc" id="L281" title="All 2 branches missed.">        if (suppressAllComments) {</span>
+<span class="nc" id="L282">            return;</span>
+        }
+
+<span class="nc" id="L285">        StringBuilder sb = new StringBuilder();</span>
+
+<span class="nc bnc" id="L287" title="All 2 branches missed.">        if (&quot;distinct&quot;.equals(field.getName())) {</span>
+<span class="nc" id="L288">            sb.append(&quot; 过滤重复数据&quot;);</span>
+<span class="nc bnc" id="L289" title="All 2 branches missed.">        } else if (&quot;orderByClause&quot;.equals(field.getName())) {</span>
+<span class="nc" id="L290">            sb.append(&quot; 排序字段&quot;);</span>
+<span class="nc bnc" id="L291" title="All 2 branches missed.">        } else if (&quot;oredCriteria&quot;.equals(field.getName())) {</span>
+<span class="nc" id="L292">            sb.append(&quot; 查询条件&quot;);</span>
+        }
+<span class="nc bnc" id="L294" title="All 2 branches missed.">        if (sb.length() &gt; 0) {</span>
+<span class="nc" id="L295">            field.addJavaDocLine(&quot;/**&quot;);</span>
+<span class="nc" id="L296">            field.addJavaDocLine(&quot; *&quot; + sb.toString());</span>
+<span class="nc" id="L297">            field.addJavaDocLine(&quot; */&quot;);</span>
+        }
+<span class="nc" id="L299">    }</span>
+
+    /* (non-Javadoc)
+     * @see org.mybatis.generator.api.CommentGenerator#addGeneralMethodComment(org.mybatis.generator.api.dom.java.Method, org.mybatis.generator.api.IntrospectedTable)
+     * 修改mapper接口中的注释
+     */
+    @Override
+    public void addGeneralMethodComment(Method method,
+                                        IntrospectedTable introspectedTable) {
+<span class="nc bnc" id="L308" title="All 2 branches missed.">        if (suppressAllComments) {</span>
+<span class="nc" id="L309">            return;</span>
+        }
+
+<span class="nc" id="L312">        StringBuilder sb = new StringBuilder();</span>
+
+<span class="nc" id="L314">        sb.append(&quot; *&quot;);</span>
+<span class="nc bnc" id="L315" title="All 2 branches missed.">        if (method.isConstructor()) {</span>
+<span class="nc" id="L316">            sb.append(&quot; 构造查询条件&quot;);</span>
+        }
+<span class="nc" id="L318">        String method_name = method.getName();</span>
+<span class="nc bnc" id="L319" title="All 6 branches missed.">        if (&quot;toString&quot;.equals(method_name)</span>
+                || &quot;hashCode&quot;.equals(method_name)
+                || &quot;equals&quot;.equals(method_name)) {
+<span class="nc" id="L322">            return;</span>
+<span class="nc bnc" id="L323" title="All 2 branches missed.">        } else if (&quot;setOrderByClause&quot;.equals(method_name)) {</span>
+<span class="nc" id="L324">            sb.append(&quot; 设置排序字段&quot;);</span>
+<span class="nc bnc" id="L325" title="All 2 branches missed.">        } else if (&quot;setDistinct&quot;.equals(method_name)) {</span>
+<span class="nc" id="L326">            sb.append(&quot; 设置过滤重复数据&quot;);</span>
+<span class="nc bnc" id="L327" title="All 2 branches missed.">        } else if (&quot;getOredCriteria&quot;.equals(method_name)) {</span>
+<span class="nc" id="L328">            sb.append(&quot; 获取当前的查询条件实例&quot;);</span>
+<span class="nc bnc" id="L329" title="All 2 branches missed.">        } else if (&quot;isDistinct&quot;.equals(method_name)) {</span>
+<span class="nc" id="L330">            sb.append(&quot; 是否过滤重复数据&quot;);</span>
+<span class="nc bnc" id="L331" title="All 2 branches missed.">        } else if (&quot;getOrderByClause&quot;.equals(method_name)) {</span>
+<span class="nc" id="L332">            sb.append(&quot; 获取排序字段&quot;);</span>
+<span class="nc bnc" id="L333" title="All 2 branches missed.">        } else if (&quot;createCriteria&quot;.equals(method_name)) {</span>
+<span class="nc" id="L334">            sb.append(&quot; 创建一个查询条件&quot;);</span>
+<span class="nc bnc" id="L335" title="All 2 branches missed.">        } else if (&quot;createCriteriaInternal&quot;.equals(method_name)) {</span>
+<span class="nc" id="L336">            sb.append(&quot; 内部构建查询条件对象&quot;);</span>
+<span class="nc bnc" id="L337" title="All 2 branches missed.">        } else if (&quot;clear&quot;.equals(method_name)) {</span>
+<span class="nc" id="L338">            sb.append(&quot; 清除查询条件&quot;);</span>
+<span class="nc bnc" id="L339" title="All 2 branches missed.">        } else if (&quot;countByExample&quot;.equals(method_name)) {</span>
+<span class="nc" id="L340">            sb.append(&quot; 根据指定的条件获取数据库记录数&quot;);</span>
+<span class="nc bnc" id="L341" title="All 2 branches missed.">        } else if (&quot;deleteByExample&quot;.equals(method_name)) {</span>
+<span class="nc" id="L342">            sb.append(&quot; 根据指定的条件删除数据库符合条件的记录&quot;);</span>
+<span class="nc bnc" id="L343" title="All 2 branches missed.">        } else if (&quot;deleteByPrimaryKey&quot;.equals(method_name)) {</span>
+<span class="nc" id="L344">            sb.append(&quot; 根据主键删除数据库的记录&quot;);</span>
+<span class="nc bnc" id="L345" title="All 2 branches missed.">        } else if (&quot;insert&quot;.equals(method_name)) {</span>
+<span class="nc" id="L346">            sb.append(&quot; 新写入数据库记录&quot;);</span>
+<span class="nc bnc" id="L347" title="All 2 branches missed.">        } else if (&quot;insertSelective&quot;.equals(method_name)) {</span>
+<span class="nc" id="L348">            sb.append(&quot; 动态字段,写入数据库记录&quot;);</span>
+<span class="nc bnc" id="L349" title="All 2 branches missed.">        } else if (&quot;selectByExample&quot;.equals(method_name)) {</span>
+<span class="nc" id="L350">            sb.append(&quot; 根据指定的条件查询符合条件的数据库记录&quot;);</span>
+<span class="nc bnc" id="L351" title="All 2 branches missed.">        } else if (&quot;selectByPrimaryKey&quot;.equals(method_name)) {</span>
+<span class="nc" id="L352">            sb.append(&quot; 根据指定主键获取一条数据库记录&quot;);</span>
+<span class="nc bnc" id="L353" title="All 2 branches missed.">        } else if (&quot;updateByExampleSelective&quot;.equals(method_name)) {</span>
+<span class="nc" id="L354">            sb.append(&quot; 动态根据指定的条件来更新符合条件的数据库记录&quot;);</span>
+<span class="nc bnc" id="L355" title="All 2 branches missed.">        } else if (&quot;updateByExample&quot;.equals(method_name)) {</span>
+<span class="nc" id="L356">            sb.append(&quot; 根据指定的条件来更新符合条件的数据库记录&quot;);</span>
+<span class="nc bnc" id="L357" title="All 2 branches missed.">        } else if (&quot;updateByPrimaryKeySelective&quot;.equals(method_name)) {</span>
+<span class="nc" id="L358">            sb.append(&quot; 动态字段,根据主键来更新符合条件的数据库记录&quot;);</span>
+<span class="nc bnc" id="L359" title="All 2 branches missed.">        } else if (&quot;updateByPrimaryKey&quot;.equals(method_name)) {</span>
+<span class="nc" id="L360">            sb.append(&quot; 根据主键来更新符合条件的数据库记录&quot;);</span>
+        }
+
+<span class="nc" id="L363">        final List&lt;Parameter&gt; parameterList = method.getParameters();</span>
+<span class="nc bnc" id="L364" title="All 2 branches missed.">        if (!parameterList.isEmpty()) {</span>
+<span class="nc bnc" id="L365" title="All 2 branches missed.">            if (&quot;or&quot;.equals(method_name)) {</span>
+<span class="nc" id="L366">                sb.append(&quot; 增加或者的查询条件,用于构建或者查询&quot;);</span>
+            }
+<span class="nc bnc" id="L368" title="All 2 branches missed.">        } else if (&quot;or&quot;.equals(method_name)) {</span>
+<span class="nc" id="L369">            sb.append(&quot; 创建一个新的或者查询条件&quot;);</span>
+        }
+
+<span class="nc" id="L372">        method.addJavaDocLine(&quot;/** &quot;);</span>
+<span class="nc" id="L373">        method.addJavaDocLine(sb.toString());</span>
+
+        String paramterName;
+<span class="nc bnc" id="L376" title="All 2 branches missed.">        for (Parameter parameter : parameterList) {</span>
+<span class="nc" id="L377">            sb.setLength(0);</span>
+<span class="nc" id="L378">            sb.append(&quot; * @param &quot;); //$NON-NLS-1$</span>
+<span class="nc" id="L379">            paramterName = parameter.getName();</span>
+<span class="nc" id="L380">            sb.append(paramterName);</span>
+<span class="nc bnc" id="L381" title="All 2 branches missed.">            if (&quot;orderByClause&quot;.equals(paramterName)) {</span>
+<span class="nc" id="L382">                sb.append(&quot; 排序字段&quot;); //$NON-NLS-1$</span>
+<span class="nc bnc" id="L383" title="All 2 branches missed.">            } else if (&quot;distinct&quot;.equals(paramterName)) {</span>
+<span class="nc" id="L384">                sb.append(&quot; 是否过滤重复数据&quot;);</span>
+<span class="nc bnc" id="L385" title="All 2 branches missed.">            } else if (&quot;criteria&quot;.equals(paramterName)) {</span>
+<span class="nc" id="L386">                sb.append(&quot; 过滤条件实例&quot;);</span>
+            }
+<span class="nc" id="L388">            method.addJavaDocLine(sb.toString());</span>
+<span class="nc" id="L389">        }</span>
+
+<span class="nc" id="L391">        method.addJavaDocLine(&quot; */&quot;); //$NON-NLS-1$</span>
+<span class="nc" id="L392">    }</span>
+
+    /* (non-Javadoc)
+     * @see org.mybatis.generator.api.CommentGenerator#addGetterComment(org.mybatis.generator.api.dom.java.Method, org.mybatis.generator.api.IntrospectedTable, org.mybatis.generator.api.IntrospectedColumn)
+     * getter方法
+     */
+    @Override
+    public void addGetterComment(Method method,
+                                 IntrospectedTable introspectedTable,
+                                 IntrospectedColumn introspectedColumn) {
+<span class="nc bnc" id="L402" title="All 2 branches missed.">        if (suppressAllComments) {</span>
+<span class="nc" id="L403">            return;</span>
+        }
+
+<span class="nc" id="L406">        StringBuilder sb = new StringBuilder();</span>
+
+<span class="nc" id="L408">        method.addJavaDocLine(&quot;/** &quot;); //$NON-NLS-1$</span>
+
+<span class="nc" id="L410">        sb.append(&quot; * 获取 &quot;); //$NON-NLS-1$</span>
+<span class="nc bnc" id="L411" title="All 4 branches missed.">        if (introspectedColumn.getRemarks() != null</span>
+                &amp;&amp; !introspectedColumn.getRemarks().equals(&quot;&quot;)) {
+<span class="nc" id="L413">            sb.append(introspectedColumn.getRemarks())</span>
+                    .append(&quot; &quot;);
+        }
+<span class="nc" id="L416">        sb.append(introspectedTable.getFullyQualifiedTable())</span>
+                .append('.')
+                .append(introspectedColumn.getActualColumnName());
+
+<span class="nc" id="L420">        method.addJavaDocLine(sb.toString());</span>
+
+<span class="nc" id="L422">        sb.setLength(0);</span>
+
+<span class="nc" id="L424">        sb.append(&quot; * @return &quot;); //$NON-NLS-1$</span>
+<span class="nc bnc" id="L425" title="All 4 branches missed.">        if (introspectedColumn.getRemarks() != null</span>
+                &amp;&amp; !introspectedColumn.getRemarks().equals(&quot;&quot;)) {
+<span class="nc" id="L427">            sb.append(introspectedColumn.getRemarks());</span>
+        } else {
+<span class="nc" id="L429">            sb.append(introspectedTable.getFullyQualifiedTable())</span>
+                    .append('.')
+                    .append(introspectedColumn.getActualColumnName());
+        }
+<span class="nc" id="L433">        method.addJavaDocLine(sb.toString());</span>
+<span class="nc" id="L434">        method.addJavaDocLine(&quot; */&quot;); //$NON-NLS-1$</span>
+<span class="nc" id="L435">    }</span>
+
+    /* (non-Javadoc)
+     * @see org.mybatis.generator.api.CommentGenerator#addSetterComment(org.mybatis.generator.api.dom.java.Method, org.mybatis.generator.api.IntrospectedTable, org.mybatis.generator.api.IntrospectedColumn)
+     * setter方法
+     */
+    @Override
+    public void addSetterComment(Method method,
+                                 IntrospectedTable introspectedTable,
+                                 IntrospectedColumn introspectedColumn) {
+<span class="nc bnc" id="L445" title="All 2 branches missed.">        if (suppressAllComments) {</span>
+<span class="nc" id="L446">            return;</span>
+        }
+
+<span class="nc" id="L449">        StringBuilder sb = new StringBuilder();</span>
+
+<span class="nc" id="L451">        method.addJavaDocLine(&quot;/** &quot;); //$NON-NLS-1$</span>
+
+<span class="nc" id="L453">        sb.append(&quot; * 设置 &quot;);  //$NON-NLS-1$</span>
+<span class="nc bnc" id="L454" title="All 4 branches missed.">        if (introspectedColumn.getRemarks() != null</span>
+                &amp;&amp; !introspectedColumn.getRemarks().equals(&quot;&quot;)) {
+<span class="nc" id="L456">            sb.append(introspectedColumn.getRemarks())</span>
+                    .append(&quot; &quot;);
+        }
+<span class="nc" id="L459">        sb.append(introspectedTable.getFullyQualifiedTable())</span>
+                .append('.')
+                .append(introspectedColumn.getActualColumnName());
+
+<span class="nc" id="L463">        method.addJavaDocLine(sb.toString());</span>
+
+        // 参数
+<span class="nc" id="L466">        Parameter parm = method.getParameters().get(0);</span>
+<span class="nc" id="L467">        sb.setLength(0);</span>
+<span class="nc" id="L468">        sb.append(&quot; * @param &quot;).append(parm.getName() + &quot; &quot;);</span>
+<span class="nc bnc" id="L469" title="All 4 branches missed.">        if (introspectedColumn.getRemarks() != null</span>
+                &amp;&amp; !introspectedColumn.getRemarks().equals(&quot;&quot;)) {
+<span class="nc" id="L471">            sb.append(introspectedColumn.getRemarks());</span>
+        } else {
+<span class="nc" id="L473">            sb.append(introspectedTable.getFullyQualifiedTable())</span>
+                    .append('.')
+                    .append(introspectedColumn.getActualColumnName());
+        }
+<span class="nc" id="L477">        method.addJavaDocLine(sb.toString());</span>
+<span class="nc" id="L478">        method.addJavaDocLine(&quot; */&quot;); //$NON-NLS-1$</span>
+<span class="nc" id="L479">    }</span>
+
+    /* (non-Javadoc)
+     * @see org.mybatis.generator.api.CommentGenerator#addClassComment(org.mybatis.generator.api.dom.java.InnerClass, org.mybatis.generator.api.IntrospectedTable)
+     */
+    @Override
+    public void addClassComment(InnerClass innerClass,
+                                IntrospectedTable introspectedTable) {
+        // add no document level comments by default
+        // 删除生成GeneratedCriteria对象的注释信息的注释
+<span class="nc bnc" id="L489" title="All 2 branches missed.">        if (suppressAllComments) {</span>
+<span class="nc" id="L490">            return;</span>
+        }
+<span class="nc" id="L492">        StringBuilder sb = new StringBuilder();</span>
+<span class="nc" id="L493">        String shortName = innerClass.getType().getShortName();</span>
+<span class="nc" id="L494">        innerClass.addJavaDocLine(&quot;/**&quot;); //$NON-NLS-1$</span>
+<span class="nc" id="L495">        sb.append(&quot; * &quot;)</span>
+                .append(introspectedTable.getFullyQualifiedTable().getRemark())
+                .append(introspectedTable.getFullyQualifiedTable());
+<span class="nc bnc" id="L498" title="All 2 branches missed.">        if (&quot;GeneratedCriteria&quot;.equals(shortName)) {</span>
+<span class="nc" id="L499">            sb.append(&quot;的基本动态SQL对象.&quot;);</span>
+<span class="nc bnc" id="L500" title="All 2 branches missed.">        } else if (&quot;Criterion&quot;.equals(shortName)) {</span>
+<span class="nc" id="L501">            sb.append(&quot;的动态SQL对象.&quot;);</span>
+        }
+
+<span class="nc" id="L504">        innerClass.addJavaDocLine(sb.toString());</span>
+<span class="nc" id="L505">        innerClass.addJavaDocLine(&quot; */&quot;);</span>
+<span class="nc" id="L506">    }</span>
+
+    /* (non-Javadoc)
+     * @see org.mybatis.generator.api.CommentGenerator#addClassComment(org.mybatis.generator.api.dom.java.InnerClass, org.mybatis.generator.api.IntrospectedTable, boolean)
+     * 删除生成Criteria对象的注释信息的注释
+     */
+    @Override
+    public void addClassComment(InnerClass innerClass,
+                                IntrospectedTable introspectedTable, boolean markAsDoNotDelete) {
+        // add no document level comments by default
+        // 生成Criteria对象的注释信息的注释
+<span class="nc" id="L517">        StringBuilder sb = new StringBuilder();</span>
+<span class="nc" id="L518">        innerClass.addJavaDocLine(&quot;/**&quot;);</span>
+<span class="nc" id="L519">        sb.append(&quot; * &quot;).append(introspectedTable.getFullyQualifiedTable().getRemark())</span>
+                .append(introspectedTable.getFullyQualifiedTable()).append(&quot;的映射实体&quot;);
+
+<span class="nc" id="L522">        innerClass.addJavaDocLine(sb.toString());</span>
+<span class="nc" id="L523">        innerClass.addJavaDocLine(&quot; */&quot;);</span>
+<span class="nc" id="L524">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.7.201606060606</span></div></body></html>

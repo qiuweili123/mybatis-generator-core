@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="zh"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>SimpleXMLMapperGenerator.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">MyBatis Generator Core</a> &gt; <a href="index.source.html" class="el_package">org.mybatis.generator.codegen.mybatis3.xmlmapper</a> &gt; <span class="el_source">SimpleXMLMapperGenerator.java</span></div><h1>SimpleXMLMapperGenerator.java</h1><pre class="source lang-java linenums">/**
+ * Copyright 2006-2016 the original author or authors.
+ * &lt;p&gt;
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * &lt;p&gt;
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * &lt;p&gt;
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package org.mybatis.generator.codegen.mybatis3.xmlmapper;
+
+import org.mybatis.generator.api.FullyQualifiedTable;
+import org.mybatis.generator.api.dom.xml.Attribute;
+import org.mybatis.generator.api.dom.xml.Document;
+import org.mybatis.generator.api.dom.xml.XmlElement;
+import org.mybatis.generator.codegen.AbstractXmlGenerator;
+import org.mybatis.generator.codegen.XmlConstants;
+import org.mybatis.generator.codegen.mybatis3.xmlmapper.elements.*;
+
+import static org.mybatis.generator.internal.util.messages.Messages.getString;
+
+/**
+ *
+ * @author Jeff Butler
+ *
+ */
+public class SimpleXMLMapperGenerator extends AbstractXmlGenerator {
+
+    public SimpleXMLMapperGenerator() {
+<span class="nc" id="L36">        super();</span>
+<span class="nc" id="L37">    }</span>
+
+    protected XmlElement getSqlMapElement() {
+<span class="nc" id="L40">        FullyQualifiedTable table = introspectedTable.getFullyQualifiedTable();</span>
+<span class="nc" id="L41">        progressCallback.startTask(getString(&quot;Progress.12&quot;, table.toString())); //$NON-NLS-1$</span>
+<span class="nc" id="L42">        XmlElement answer = new XmlElement(&quot;mapper&quot;); //$NON-NLS-1$</span>
+<span class="nc" id="L43">        String namespace = introspectedTable.getMyBatis3SqlMapNamespace();</span>
+<span class="nc" id="L44">        answer.addAttribute(new Attribute(&quot;namespace&quot;, //$NON-NLS-1$</span>
+                namespace));
+
+<span class="nc" id="L47">        context.getCommentGenerator().addRootComment(answer);</span>
+
+<span class="nc" id="L49">        addResultMapElement(answer);</span>
+<span class="nc" id="L50">        addDeleteByPrimaryKeyElement(answer);</span>
+<span class="nc" id="L51">        addInsertElement(answer);</span>
+<span class="nc" id="L52">        addUpdateByPrimaryKeyElement(answer);</span>
+<span class="nc" id="L53">        addSelectByPrimaryKeyElement(answer);</span>
+<span class="nc" id="L54">        addSelectAllElement(answer);</span>
+
+<span class="nc" id="L56">        return answer;</span>
+    }
+
+    protected void addResultMapElement(XmlElement parentElement) {
+<span class="nc bnc" id="L60" title="All 2 branches missed.">        if (introspectedTable.getRules().generateBaseResultMap()) {</span>
+<span class="nc" id="L61">            AbstractXmlElementGenerator elementGenerator = new ResultMapWithoutBLOBsElementGenerator(</span>
+                    true);
+<span class="nc" id="L63">            initializeAndExecuteGenerator(elementGenerator, parentElement);</span>
+        }
+<span class="nc" id="L65">    }</span>
+
+    protected void addSelectByPrimaryKeyElement(XmlElement parentElement) {
+<span class="nc bnc" id="L68" title="All 2 branches missed.">        if (introspectedTable.getRules().generateSelectByPrimaryKey()) {</span>
+<span class="nc" id="L69">            AbstractXmlElementGenerator elementGenerator = new SimpleSelectByPrimaryKeyElementGenerator();</span>
+<span class="nc" id="L70">            initializeAndExecuteGenerator(elementGenerator, parentElement);</span>
+        }
+<span class="nc" id="L72">    }</span>
+
+    protected void addSelectAllElement(XmlElement parentElement) {
+<span class="nc" id="L75">        AbstractXmlElementGenerator elementGenerator = new SimpleSelectAllElementGenerator();</span>
+<span class="nc" id="L76">        initializeAndExecuteGenerator(elementGenerator, parentElement);</span>
+<span class="nc" id="L77">    }</span>
+
+    protected void addDeleteByPrimaryKeyElement(XmlElement parentElement) {
+<span class="nc bnc" id="L80" title="All 2 branches missed.">        if (introspectedTable.getRules().generateDeleteByPrimaryKey()) {</span>
+<span class="nc" id="L81">            AbstractXmlElementGenerator elementGenerator = new DeleteByPrimaryKeyElementGenerator(true);</span>
+<span class="nc" id="L82">            initializeAndExecuteGenerator(elementGenerator, parentElement);</span>
+        }
+<span class="nc" id="L84">    }</span>
+
+    protected void addInsertElement(XmlElement parentElement) {
+<span class="nc bnc" id="L87" title="All 2 branches missed.">        if (introspectedTable.getRules().generateInsert()) {</span>
+<span class="nc" id="L88">            AbstractXmlElementGenerator elementGenerator = new InsertElementGenerator(true);</span>
+<span class="nc" id="L89">            initializeAndExecuteGenerator(elementGenerator, parentElement);</span>
+        }
+<span class="nc" id="L91">    }</span>
+
+    protected void addUpdateByPrimaryKeyElement(XmlElement parentElement) {
+<span class="nc bnc" id="L94" title="All 2 branches missed.">        if (introspectedTable.getRules().generateUpdateByPrimaryKeySelective()) {</span>
+<span class="nc" id="L95">            AbstractXmlElementGenerator elementGenerator = new UpdateByPrimaryKeyWithoutBLOBsElementGenerator(</span>
+                    true);
+<span class="nc" id="L97">            initializeAndExecuteGenerator(elementGenerator, parentElement);</span>
+        }
+<span class="nc" id="L99">    }</span>
+
+    protected void initializeAndExecuteGenerator(
+            AbstractXmlElementGenerator elementGenerator,
+            XmlElement parentElement) {
+<span class="nc" id="L104">        elementGenerator.setContext(context);</span>
+<span class="nc" id="L105">        elementGenerator.setIntrospectedTable(introspectedTable);</span>
+<span class="nc" id="L106">        elementGenerator.setProgressCallback(progressCallback);</span>
+<span class="nc" id="L107">        elementGenerator.setWarnings(warnings);</span>
+<span class="nc" id="L108">        elementGenerator.addElements(parentElement);</span>
+<span class="nc" id="L109">    }</span>
+
+    @Override
+    public Document getDocument() {
+<span class="nc" id="L113">        Document document = new Document(</span>
+                XmlConstants.MYBATIS3_MAPPER_PUBLIC_ID,
+                XmlConstants.MYBATIS3_MAPPER_SYSTEM_ID);
+<span class="nc" id="L116">        document.setRootElement(getSqlMapElement());</span>
+
+<span class="nc bnc" id="L118" title="All 2 branches missed.">        if (!context.getPlugins().sqlMapDocumentGenerated(document,</span>
+                introspectedTable)) {
+<span class="nc" id="L120">            document = null;</span>
+        }
+
+<span class="nc" id="L123">        return document;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.7.201606060606</span></div></body></html>

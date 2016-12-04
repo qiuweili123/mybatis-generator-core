@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="zh"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>CaseInsensitiveLikePlugin.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">MyBatis Generator Core</a> &gt; <a href="index.source.html" class="el_package">org.mybatis.generator.plugins</a> &gt; <span class="el_source">CaseInsensitiveLikePlugin.java</span></div><h1>CaseInsensitiveLikePlugin.java</h1><pre class="source lang-java linenums">/**
+ * Copyright 2006-2016 the original author or authors.
+ * &lt;p&gt;
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * &lt;p&gt;
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * &lt;p&gt;
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package org.mybatis.generator.plugins;
+
+import org.mybatis.generator.api.IntrospectedColumn;
+import org.mybatis.generator.api.IntrospectedTable;
+import org.mybatis.generator.api.PluginAdapter;
+import org.mybatis.generator.api.dom.java.*;
+import org.mybatis.generator.codegen.ibatis2.Ibatis2FormattingUtilities;
+
+import java.util.List;
+
+/**
+ * This plugin demonstrates adding methods to the example class to enable
+ * case-insensitive LIKE searches. It shows hows to construct new methods and
+ * add them to an existing class.
+ *
+ * This plugin only adds methods for String fields mapped to a JDBC character
+ * type (CHAR, VARCHAR, etc.)
+ *
+ * 这个插件用来在XXXExample类中生成大小写敏感的LIKE方法
+ * （插件本身用处不大，但是我们可以通过这个插件学习给XXXExample类添加额外的方法）
+ * @author Jeff Butler
+ *
+ */
+public class CaseInsensitiveLikePlugin extends PluginAdapter {
+
+    /**
+     *
+     */
+    public CaseInsensitiveLikePlugin() {
+<span class="nc" id="L45">        super();</span>
+<span class="nc" id="L46">    }</span>
+
+    public boolean validate(List&lt;String&gt; warnings) {
+<span class="nc" id="L49">        return true;</span>
+    }
+
+    @Override
+    public boolean modelExampleClassGenerated(TopLevelClass topLevelClass,
+                                              IntrospectedTable introspectedTable) {
+
+<span class="nc" id="L56">        InnerClass criteria = null;</span>
+        // first, find the Criteria inner class
+<span class="nc bnc" id="L58" title="All 2 branches missed.">        for (InnerClass innerClass : topLevelClass.getInnerClasses()) {</span>
+<span class="nc bnc" id="L59" title="All 2 branches missed.">            if (&quot;GeneratedCriteria&quot;.equals(innerClass.getType().getShortName())) { //$NON-NLS-1$</span>
+<span class="nc" id="L60">                criteria = innerClass;</span>
+<span class="nc" id="L61">                break;</span>
+            }
+<span class="nc" id="L63">        }</span>
+
+<span class="nc bnc" id="L65" title="All 2 branches missed.">        if (criteria == null) {</span>
+            // can't find the inner class for some reason, bail out.
+<span class="nc" id="L67">            return true;</span>
+        }
+
+<span class="nc bnc" id="L70" title="All 2 branches missed.">        for (IntrospectedColumn introspectedColumn : introspectedTable</span>
+                .getNonBLOBColumns()) {
+<span class="nc bnc" id="L72" title="All 4 branches missed.">            if (!introspectedColumn.isJdbcCharacterColumn()</span>
+                    || !introspectedColumn.isStringColumn()) {
+<span class="nc" id="L74">                continue;</span>
+            }
+
+<span class="nc" id="L77">            Method method = new Method();</span>
+<span class="nc" id="L78">            method.setVisibility(JavaVisibility.PUBLIC);</span>
+<span class="nc" id="L79">            method.addParameter(new Parameter(introspectedColumn</span>
+                    .getFullyQualifiedJavaType(), &quot;value&quot;)); //$NON-NLS-1$
+
+<span class="nc" id="L82">            StringBuilder sb = new StringBuilder();</span>
+<span class="nc" id="L83">            sb.append(introspectedColumn.getJavaProperty());</span>
+<span class="nc" id="L84">            sb.setCharAt(0, Character.toUpperCase(sb.charAt(0)));</span>
+<span class="nc" id="L85">            sb.insert(0, &quot;and&quot;); //$NON-NLS-1$</span>
+<span class="nc" id="L86">            sb.append(&quot;LikeInsensitive&quot;); //$NON-NLS-1$</span>
+<span class="nc" id="L87">            method.setName(sb.toString());</span>
+<span class="nc" id="L88">            method.setReturnType(FullyQualifiedJavaType.getCriteriaInstance());</span>
+
+<span class="nc" id="L90">            sb.setLength(0);</span>
+<span class="nc" id="L91">            sb.append(&quot;addCriterion(\&quot;upper(&quot;); //$NON-NLS-1$</span>
+<span class="nc" id="L92">            sb.append(Ibatis2FormattingUtilities</span>
+                    .getAliasedActualColumnName(introspectedColumn));
+<span class="nc" id="L94">            sb.append(&quot;) like\&quot;, value.toUpperCase(), \&quot;&quot;); //$NON-NLS-1$</span>
+<span class="nc" id="L95">            sb.append(introspectedColumn.getJavaProperty());</span>
+<span class="nc" id="L96">            sb.append(&quot;\&quot;);&quot;); //$NON-NLS-1$</span>
+<span class="nc" id="L97">            method.addBodyLine(sb.toString());</span>
+<span class="nc" id="L98">            method.addBodyLine(&quot;return (Criteria) this;&quot;); //$NON-NLS-1$</span>
+
+<span class="nc" id="L100">            criteria.addMethod(method);</span>
+<span class="nc" id="L101">        }</span>
+
+<span class="nc" id="L103">        return true;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.7.201606060606</span></div></body></html>

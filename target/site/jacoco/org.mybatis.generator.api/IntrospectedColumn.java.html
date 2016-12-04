@@ -1,0 +1,344 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="zh"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>IntrospectedColumn.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">MyBatis Generator Core</a> &gt; <a href="index.source.html" class="el_package">org.mybatis.generator.api</a> &gt; <span class="el_source">IntrospectedColumn.java</span></div><h1>IntrospectedColumn.java</h1><pre class="source lang-java linenums">/**
+ * Copyright 2006-2016 the original author or authors.
+ * &lt;p&gt;
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * &lt;p&gt;
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * &lt;p&gt;
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package org.mybatis.generator.api;
+
+import org.mybatis.generator.api.dom.java.FullyQualifiedJavaType;
+import org.mybatis.generator.config.Context;
+import org.mybatis.generator.internal.util.StringUtility;
+
+import java.sql.Types;
+import java.util.Properties;
+
+/**
+ * This class holds information about an introspected column. The class has
+ * utility methods useful for generating iBATIS objects.
+ *
+ * @author Jeff Butler
+ */
+public class IntrospectedColumn {
+    protected String actualColumnName;
+
+    protected int jdbcType;
+
+    protected String jdbcTypeName;
+
+    protected boolean nullable;
+
+    protected int length;
+
+    protected int scale;
+
+    protected boolean identity;
+
+    protected boolean isSequenceColumn;
+
+    protected String javaProperty;
+
+    protected FullyQualifiedJavaType fullyQualifiedJavaType;
+
+    protected String tableAlias;
+
+    protected String typeHandler;
+
+    protected Context context;
+
+    protected boolean isColumnNameDelimited;
+
+    protected IntrospectedTable introspectedTable;
+
+    protected Properties properties;
+
+    // any database comment associated with this column. May be null
+    protected String remarks;
+
+    protected String defaultValue;
+
+    /**
+     * true if the JDBC driver reports that this column is auto-increment
+     */
+    protected boolean isAutoIncrement;
+
+    /**
+     * true if the JDBC driver reports that this column is generated
+     */
+    protected boolean isGeneratedColumn;
+
+    /**
+     * True if there is a column override that defines this column as GENERATED ALWAYS
+     */
+    protected boolean isGeneratedAlways;
+
+    /**
+     * Constructs a Column definition. This object holds all the information
+     * about a column that is required to generate Java objects and SQL maps;
+     */
+    public IntrospectedColumn() {
+<span class="nc" id="L89">        super();</span>
+<span class="nc" id="L90">        properties = new Properties();</span>
+<span class="nc" id="L91">    }</span>
+
+    public int getJdbcType() {
+<span class="nc" id="L94">        return jdbcType;</span>
+    }
+
+    public void setJdbcType(int jdbcType) {
+<span class="nc" id="L98">        this.jdbcType = jdbcType;</span>
+<span class="nc" id="L99">    }</span>
+
+    public int getLength() {
+<span class="nc" id="L102">        return length;</span>
+    }
+
+    public void setLength(int length) {
+<span class="nc" id="L106">        this.length = length;</span>
+<span class="nc" id="L107">    }</span>
+
+    public boolean isNullable() {
+<span class="nc" id="L110">        return nullable;</span>
+    }
+
+    public void setNullable(boolean nullable) {
+<span class="nc" id="L114">        this.nullable = nullable;</span>
+<span class="nc" id="L115">    }</span>
+
+    public int getScale() {
+<span class="nc" id="L118">        return scale;</span>
+    }
+
+    public void setScale(int scale) {
+<span class="nc" id="L122">        this.scale = scale;</span>
+<span class="nc" id="L123">    }</span>
+
+    /*
+     * This method is primarily used for debugging, so we don't externalize the
+     * strings
+     */
+    @Override
+    public String toString() {
+<span class="nc" id="L131">        StringBuilder sb = new StringBuilder();</span>
+
+<span class="nc" id="L133">        sb.append(&quot;Actual Column Name: &quot;); //$NON-NLS-1$</span>
+<span class="nc" id="L134">        sb.append(actualColumnName);</span>
+<span class="nc" id="L135">        sb.append(&quot;, JDBC Type: &quot;); //$NON-NLS-1$</span>
+<span class="nc" id="L136">        sb.append(jdbcType);</span>
+<span class="nc" id="L137">        sb.append(&quot;, Nullable: &quot;); //$NON-NLS-1$</span>
+<span class="nc" id="L138">        sb.append(nullable);</span>
+<span class="nc" id="L139">        sb.append(&quot;, Length: &quot;); //$NON-NLS-1$</span>
+<span class="nc" id="L140">        sb.append(length);</span>
+<span class="nc" id="L141">        sb.append(&quot;, Scale: &quot;); //$NON-NLS-1$</span>
+<span class="nc" id="L142">        sb.append(scale);</span>
+<span class="nc" id="L143">        sb.append(&quot;, Identity: &quot;); //$NON-NLS-1$</span>
+<span class="nc" id="L144">        sb.append(identity);</span>
+
+<span class="nc" id="L146">        return sb.toString();</span>
+    }
+
+    /**
+     * @return Returns the identity.
+     */
+    public boolean isIdentity() {
+<span class="nc" id="L153">        return identity;</span>
+    }
+
+    /**
+     * @param identity
+     *            The identity to set.
+     */
+    public void setIdentity(boolean identity) {
+<span class="nc" id="L161">        this.identity = identity;</span>
+<span class="nc" id="L162">    }</span>
+
+    public boolean isBLOBColumn() {
+<span class="nc" id="L165">        String typeName = getJdbcTypeName();</span>
+
+<span class="nc bnc" id="L167" title="All 16 branches missed.">        return &quot;BINARY&quot;.equals(typeName) || &quot;BLOB&quot;.equals(typeName) //$NON-NLS-1$ //$NON-NLS-2$</span>
+                || &quot;CLOB&quot;.equals(typeName) || &quot;LONGNVARCHAR&quot;.equals(typeName) //$NON-NLS-1$ //$NON-NLS-2$
+                || &quot;LONGVARBINARY&quot;.equals(typeName) || &quot;LONGVARCHAR&quot;.equals(typeName) //$NON-NLS-1$ //$NON-NLS-2$
+                || &quot;NCLOB&quot;.equals(typeName) || &quot;VARBINARY&quot;.equals(typeName); //$NON-NLS-1$ //$NON-NLS-2$
+    }
+
+    public boolean isStringColumn() {
+<span class="nc" id="L174">        return fullyQualifiedJavaType.equals(FullyQualifiedJavaType</span>
+                .getStringInstance());
+    }
+
+    public boolean isJdbcCharacterColumn() {
+<span class="nc bnc" id="L179" title="All 16 branches missed.">        return jdbcType == Types.CHAR || jdbcType == Types.CLOB</span>
+                || jdbcType == Types.LONGVARCHAR || jdbcType == Types.VARCHAR
+                || jdbcType == Types.LONGNVARCHAR || jdbcType == Types.NCHAR
+                || jdbcType == Types.NCLOB || jdbcType == Types.NVARCHAR;
+    }
+
+    public String getJavaProperty() {
+<span class="nc" id="L186">        return getJavaProperty(null);</span>
+    }
+
+    public void setJavaProperty(String javaProperty) {
+<span class="nc" id="L190">        this.javaProperty = javaProperty;</span>
+<span class="nc" id="L191">    }</span>
+
+    public String getJavaProperty(String prefix) {
+<span class="nc bnc" id="L194" title="All 2 branches missed.">        if (prefix == null) {</span>
+<span class="nc" id="L195">            return javaProperty;</span>
+        }
+
+<span class="nc" id="L198">        StringBuilder sb = new StringBuilder();</span>
+<span class="nc" id="L199">        sb.append(prefix);</span>
+<span class="nc" id="L200">        sb.append(javaProperty);</span>
+
+<span class="nc" id="L202">        return sb.toString();</span>
+    }
+
+    public boolean isJDBCDateColumn() {
+<span class="nc bnc" id="L206" title="All 4 branches missed.">        return fullyQualifiedJavaType.equals(FullyQualifiedJavaType</span>
+                .getDateInstance())
+                &amp;&amp; &quot;DATE&quot;.equalsIgnoreCase(jdbcTypeName); //$NON-NLS-1$
+    }
+
+    public boolean isJDBCTimeColumn() {
+<span class="nc bnc" id="L212" title="All 4 branches missed.">        return fullyQualifiedJavaType.equals(FullyQualifiedJavaType</span>
+                .getDateInstance())
+                &amp;&amp; &quot;TIME&quot;.equalsIgnoreCase(jdbcTypeName); //$NON-NLS-1$
+    }
+
+    public String getTypeHandler() {
+<span class="nc" id="L218">        return typeHandler;</span>
+    }
+
+    public void setTypeHandler(String typeHandler) {
+<span class="nc" id="L222">        this.typeHandler = typeHandler;</span>
+<span class="nc" id="L223">    }</span>
+
+    public String getActualColumnName() {
+<span class="nc" id="L226">        return actualColumnName;</span>
+    }
+
+    public void setActualColumnName(String actualColumnName) {
+<span class="nc" id="L230">        this.actualColumnName = actualColumnName;</span>
+<span class="nc" id="L231">        isColumnNameDelimited = StringUtility</span>
+                .stringContainsSpace(actualColumnName);
+<span class="nc" id="L233">    }</span>
+
+    public boolean isColumnNameDelimited() {
+<span class="nc" id="L236">        return isColumnNameDelimited;</span>
+    }
+
+    public void setColumnNameDelimited(boolean isColumnNameDelimited) {
+<span class="nc" id="L240">        this.isColumnNameDelimited = isColumnNameDelimited;</span>
+<span class="nc" id="L241">    }</span>
+
+    public String getJdbcTypeName() {
+<span class="nc bnc" id="L244" title="All 2 branches missed.">        if (jdbcTypeName == null) {</span>
+<span class="nc" id="L245">            return &quot;OTHER&quot;; //$NON-NLS-1$</span>
+        }
+
+<span class="nc" id="L248">        return jdbcTypeName;</span>
+    }
+
+    public void setJdbcTypeName(String jdbcTypeName) {
+<span class="nc" id="L252">        this.jdbcTypeName = jdbcTypeName;</span>
+<span class="nc" id="L253">    }</span>
+
+    public FullyQualifiedJavaType getFullyQualifiedJavaType() {
+<span class="nc" id="L256">        return fullyQualifiedJavaType;</span>
+    }
+
+    public void setFullyQualifiedJavaType(
+            FullyQualifiedJavaType fullyQualifiedJavaType) {
+<span class="nc" id="L261">        this.fullyQualifiedJavaType = fullyQualifiedJavaType;</span>
+<span class="nc" id="L262">    }</span>
+
+    public String getTableAlias() {
+<span class="nc" id="L265">        return tableAlias;</span>
+    }
+
+    public void setTableAlias(String tableAlias) {
+<span class="nc" id="L269">        this.tableAlias = tableAlias;</span>
+<span class="nc" id="L270">    }</span>
+
+    public Context getContext() {
+<span class="nc" id="L273">        return context;</span>
+    }
+
+    public void setContext(Context context) {
+<span class="nc" id="L277">        this.context = context;</span>
+<span class="nc" id="L278">    }</span>
+
+    public IntrospectedTable getIntrospectedTable() {
+<span class="nc" id="L281">        return introspectedTable;</span>
+    }
+
+    public void setIntrospectedTable(IntrospectedTable introspectedTable) {
+<span class="nc" id="L285">        this.introspectedTable = introspectedTable;</span>
+<span class="nc" id="L286">    }</span>
+
+    public Properties getProperties() {
+<span class="nc" id="L289">        return properties;</span>
+    }
+
+    public void setProperties(Properties properties) {
+<span class="nc" id="L293">        this.properties.putAll(properties);</span>
+<span class="nc" id="L294">    }</span>
+
+    public String getRemarks() {
+<span class="nc" id="L297">        return remarks;</span>
+    }
+
+    public void setRemarks(String remarks) {
+<span class="nc" id="L301">        this.remarks = remarks;</span>
+<span class="nc" id="L302">    }</span>
+
+    public String getDefaultValue() {
+<span class="nc" id="L305">        return defaultValue;</span>
+    }
+
+    public void setDefaultValue(String defaultValue) {
+<span class="nc" id="L309">        this.defaultValue = defaultValue;</span>
+<span class="nc" id="L310">    }</span>
+
+    public boolean isSequenceColumn() {
+<span class="nc" id="L313">        return isSequenceColumn;</span>
+    }
+
+    public void setSequenceColumn(boolean isSequenceColumn) {
+<span class="nc" id="L317">        this.isSequenceColumn = isSequenceColumn;</span>
+<span class="nc" id="L318">    }</span>
+
+    public boolean isAutoIncrement() {
+<span class="nc" id="L321">        return isAutoIncrement;</span>
+    }
+
+    public void setAutoIncrement(boolean isAutoIncrement) {
+<span class="nc" id="L325">        this.isAutoIncrement = isAutoIncrement;</span>
+<span class="nc" id="L326">    }</span>
+
+    public boolean isGeneratedColumn() {
+<span class="nc" id="L329">        return isGeneratedColumn;</span>
+    }
+
+    public void setGeneratedColumn(boolean isGeneratedColumn) {
+<span class="nc" id="L333">        this.isGeneratedColumn = isGeneratedColumn;</span>
+<span class="nc" id="L334">    }</span>
+
+    public boolean isGeneratedAlways() {
+<span class="nc" id="L337">        return isGeneratedAlways;</span>
+    }
+
+    public void setGeneratedAlways(boolean isGeneratedAlways) {
+<span class="nc" id="L341">        this.isGeneratedAlways = isGeneratedAlways;</span>
+<span class="nc" id="L342">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.7.201606060606</span></div></body></html>

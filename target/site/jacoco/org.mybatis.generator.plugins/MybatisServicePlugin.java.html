@@ -1,0 +1,617 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="zh"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MybatisServicePlugin.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">MyBatis Generator Core</a> &gt; <a href="index.source.html" class="el_package">org.mybatis.generator.plugins</a> &gt; <span class="el_source">MybatisServicePlugin.java</span></div><h1>MybatisServicePlugin.java</h1><pre class="source lang-java linenums">package org.mybatis.generator.plugins;
+
+import org.mybatis.generator.api.GeneratedJavaFile;
+import org.mybatis.generator.api.IntrospectedColumn;
+import org.mybatis.generator.api.IntrospectedTable;
+import org.mybatis.generator.api.PluginAdapter;
+import org.mybatis.generator.api.dom.java.*;
+import org.mybatis.generator.internal.util.StringUtility;
+
+import java.util.ArrayList;
+import java.util.List;
+
+/**
+ * Github: github.com/orange1438
+ *
+ * @author orange1438
+ *         2016/10/11 23:10
+ */
+public class MybatisServicePlugin extends PluginAdapter {
+
+    private FullyQualifiedJavaType slf4jLogger;
+    private FullyQualifiedJavaType slf4jLoggerFactory;
+    private FullyQualifiedJavaType serviceType;
+    private FullyQualifiedJavaType daoType;
+    private FullyQualifiedJavaType interfaceType;
+    private FullyQualifiedJavaType pojoType;
+    private FullyQualifiedJavaType pojoCriteriaType;
+    private FullyQualifiedJavaType listType;
+    private FullyQualifiedJavaType autowired;
+    private FullyQualifiedJavaType service;
+    private FullyQualifiedJavaType returnType;
+    private String servicePack;
+    private String serviceImplPack;
+    private String project;
+    private String pojoUrl;
+
+    private List&lt;Method&gt; methods;
+    /**
+     * 是否添加注解
+     */
+<span class="nc" id="L41">    private boolean enableAnnotation = true;</span>
+<span class="nc" id="L42">    private boolean enableInsert = false;</span>
+<span class="nc" id="L43">    private boolean enableInsertSelective = false;</span>
+<span class="nc" id="L44">    private boolean enableDeleteByPrimaryKey = false;</span>
+<span class="nc" id="L45">    private boolean enableDeleteByExample = false;</span>
+<span class="nc" id="L46">    private boolean enableUpdateByExample = false;</span>
+<span class="nc" id="L47">    private boolean enableUpdateByExampleSelective = false;</span>
+<span class="nc" id="L48">    private boolean enableUpdateByPrimaryKey = false;</span>
+<span class="nc" id="L49">    private boolean enableUpdateByPrimaryKeySelective = false;</span>
+
+    public MybatisServicePlugin() {
+<span class="nc" id="L52">        super();</span>
+        // 默认是slf4j
+<span class="nc" id="L54">        slf4jLogger = new FullyQualifiedJavaType(&quot;org.slf4j.Logger&quot;);</span>
+<span class="nc" id="L55">        slf4jLoggerFactory = new FullyQualifiedJavaType(&quot;org.slf4j.LoggerFactory&quot;);</span>
+<span class="nc" id="L56">        methods = new ArrayList&lt;Method&gt;();</span>
+<span class="nc" id="L57">    }</span>
+
+    @Override
+    public boolean validate(List&lt;String&gt; warnings) {
+<span class="nc bnc" id="L61" title="All 2 branches missed.">        if (StringUtility.stringHasValue(properties.getProperty(&quot;enableAnnotation&quot;)))</span>
+<span class="nc" id="L62">            enableAnnotation = StringUtility.isTrue(properties.getProperty(&quot;enableAnnotation&quot;));</span>
+
+<span class="nc" id="L64">        String enableInsert = properties.getProperty(&quot;enableInsert&quot;);</span>
+
+<span class="nc" id="L66">        String enableUpdateByExampleSelective = properties.getProperty(&quot;enableUpdateByExampleSelective&quot;);</span>
+
+<span class="nc" id="L68">        String enableInsertSelective = properties.getProperty(&quot;enableInsertSelective&quot;);</span>
+
+<span class="nc" id="L70">        String enableUpdateByPrimaryKey = properties.getProperty(&quot;enableUpdateByPrimaryKey&quot;);</span>
+
+<span class="nc" id="L72">        String enableDeleteByPrimaryKey = properties.getProperty(&quot;enableDeleteByPrimaryKey&quot;);</span>
+
+<span class="nc" id="L74">        String enableDeleteByExample = properties.getProperty(&quot;enableDeleteByExample&quot;);</span>
+
+<span class="nc" id="L76">        String enableUpdateByPrimaryKeySelective = properties.getProperty(&quot;enableUpdateByPrimaryKeySelective&quot;);</span>
+
+<span class="nc" id="L78">        String enableUpdateByExample = properties.getProperty(&quot;enableUpdateByExample&quot;);</span>
+
+<span class="nc bnc" id="L80" title="All 2 branches missed.">        if (StringUtility.stringHasValue(enableInsert))</span>
+<span class="nc" id="L81">            this.enableInsert = StringUtility.isTrue(enableInsert);</span>
+<span class="nc bnc" id="L82" title="All 2 branches missed.">        if (StringUtility.stringHasValue(enableUpdateByExampleSelective))</span>
+<span class="nc" id="L83">            this.enableUpdateByExampleSelective = StringUtility.isTrue(enableUpdateByExampleSelective);</span>
+<span class="nc bnc" id="L84" title="All 2 branches missed.">        if (StringUtility.stringHasValue(enableInsertSelective))</span>
+<span class="nc" id="L85">            this.enableInsertSelective = StringUtility.isTrue(enableInsertSelective);</span>
+<span class="nc bnc" id="L86" title="All 2 branches missed.">        if (StringUtility.stringHasValue(enableUpdateByPrimaryKey))</span>
+<span class="nc" id="L87">            this.enableUpdateByPrimaryKey = StringUtility.isTrue(enableUpdateByPrimaryKey);</span>
+<span class="nc bnc" id="L88" title="All 2 branches missed.">        if (StringUtility.stringHasValue(enableDeleteByPrimaryKey))</span>
+<span class="nc" id="L89">            this.enableDeleteByPrimaryKey = StringUtility.isTrue(enableDeleteByPrimaryKey);</span>
+<span class="nc bnc" id="L90" title="All 2 branches missed.">        if (StringUtility.stringHasValue(enableDeleteByExample))</span>
+<span class="nc" id="L91">            this.enableDeleteByExample = StringUtility.isTrue(enableDeleteByExample);</span>
+<span class="nc bnc" id="L92" title="All 2 branches missed.">        if (StringUtility.stringHasValue(enableUpdateByPrimaryKeySelective))</span>
+<span class="nc" id="L93">            this.enableUpdateByPrimaryKeySelective = StringUtility.isTrue(enableUpdateByPrimaryKeySelective);</span>
+<span class="nc bnc" id="L94" title="All 2 branches missed.">        if (StringUtility.stringHasValue(enableUpdateByExample))</span>
+<span class="nc" id="L95">            this.enableUpdateByExample = StringUtility.isTrue(enableUpdateByExample);</span>
+
+<span class="nc" id="L97">        servicePack = properties.getProperty(&quot;targetPackage&quot;);</span>
+<span class="nc" id="L98">        serviceImplPack = properties.getProperty(&quot;implementationPackage&quot;);</span>
+<span class="nc" id="L99">        project = properties.getProperty(&quot;targetProject&quot;);</span>
+
+<span class="nc" id="L101">        pojoUrl = context.getJavaModelGeneratorConfiguration().getTargetPackage();</span>
+
+<span class="nc bnc" id="L103" title="All 2 branches missed.">        if (enableAnnotation) {</span>
+<span class="nc" id="L104">            autowired = new FullyQualifiedJavaType(&quot;org.springframework.beans.factory.annotation.Autowired&quot;);</span>
+<span class="nc" id="L105">            service = new FullyQualifiedJavaType(&quot;org.springframework.stereotype.Service&quot;);</span>
+        }
+<span class="nc" id="L107">        return true;</span>
+    }
+
+    @Override
+    public List&lt;GeneratedJavaFile&gt; contextGenerateAdditionalJavaFiles(IntrospectedTable introspectedTable) {
+<span class="nc" id="L112">        List&lt;GeneratedJavaFile&gt; files = new ArrayList&lt;GeneratedJavaFile&gt;();</span>
+<span class="nc" id="L113">        String table = introspectedTable.getBaseRecordType();</span>
+<span class="nc" id="L114">        String tableName = table.replaceAll(this.pojoUrl + &quot;.&quot;, &quot;&quot;);</span>
+<span class="nc" id="L115">        interfaceType = new FullyQualifiedJavaType(servicePack + &quot;.&quot; + tableName + &quot;Service&quot;);</span>
+
+        // mybatis
+<span class="nc" id="L118">        daoType = new FullyQualifiedJavaType(introspectedTable.getMyBatis3JavaMapperType());</span>
+
+        // logger.info(toLowerCase(daoType.getShortName()));
+<span class="nc" id="L121">        serviceType = new FullyQualifiedJavaType(serviceImplPack + &quot;.&quot; + tableName + &quot;ServiceImpl&quot;);</span>
+
+<span class="nc" id="L123">        pojoType = new FullyQualifiedJavaType(pojoUrl + &quot;.&quot; + tableName);</span>
+
+<span class="nc" id="L125">        pojoCriteriaType = new FullyQualifiedJavaType(pojoUrl + &quot;.&quot; + &quot;Criteria&quot;);</span>
+<span class="nc" id="L126">        listType = new FullyQualifiedJavaType(&quot;java.util.List&quot;);</span>
+<span class="nc" id="L127">        Interface interface1 = new Interface(interfaceType);</span>
+<span class="nc" id="L128">        TopLevelClass topLevelClass = new TopLevelClass(serviceType);</span>
+        // 导入必要的类
+<span class="nc" id="L130">        addImport(interface1, topLevelClass);</span>
+
+        // 接口
+<span class="nc" id="L133">        addService(interface1, introspectedTable, tableName, files);</span>
+        // 实现类
+<span class="nc" id="L135">        addServiceImpl(topLevelClass, introspectedTable, tableName, files);</span>
+<span class="nc" id="L136">        addLogger(topLevelClass);</span>
+
+<span class="nc" id="L138">        return files;</span>
+    }
+
+    /**
+     * 添加接口
+     *
+     * @param tableName
+     * @param files
+     */
+    protected void addService(Interface interface1, IntrospectedTable introspectedTable, String tableName, List&lt;GeneratedJavaFile&gt; files) {
+
+<span class="nc" id="L149">        interface1.setVisibility(JavaVisibility.PUBLIC);</span>
+
+        // 添加方法
+<span class="nc" id="L152">        Method method = countByExample(introspectedTable, tableName);</span>
+<span class="nc" id="L153">        method.removeAllBodyLines();</span>
+<span class="nc" id="L154">        interface1.addMethod(method);</span>
+
+<span class="nc" id="L156">        method = selectByPrimaryKey(introspectedTable, tableName);</span>
+<span class="nc" id="L157">        method.removeAllBodyLines();</span>
+<span class="nc" id="L158">        interface1.addMethod(method);</span>
+
+<span class="nc" id="L160">        method = selectByExample(introspectedTable, tableName);</span>
+<span class="nc" id="L161">        method.removeAllBodyLines();</span>
+<span class="nc" id="L162">        interface1.addMethod(method);</span>
+
+<span class="nc bnc" id="L164" title="All 2 branches missed.">        if (enableDeleteByPrimaryKey) {</span>
+<span class="nc" id="L165">            method = getOtherInteger(&quot;deleteByPrimaryKey&quot;, introspectedTable, tableName, 2);</span>
+<span class="nc" id="L166">            method.removeAllBodyLines();</span>
+<span class="nc" id="L167">            interface1.addMethod(method);</span>
+        }
+<span class="nc bnc" id="L169" title="All 2 branches missed.">        if (enableUpdateByPrimaryKeySelective) {</span>
+<span class="nc" id="L170">            method = getOtherInteger(&quot;updateByPrimaryKeySelective&quot;, introspectedTable, tableName, 1);</span>
+<span class="nc" id="L171">            method.removeAllBodyLines();</span>
+<span class="nc" id="L172">            interface1.addMethod(method);</span>
+        }
+<span class="nc bnc" id="L174" title="All 2 branches missed.">        if (enableUpdateByPrimaryKey) {</span>
+<span class="nc" id="L175">            method = getOtherInteger(&quot;updateByPrimaryKey&quot;, introspectedTable, tableName, 1);</span>
+<span class="nc" id="L176">            method.removeAllBodyLines();</span>
+<span class="nc" id="L177">            interface1.addMethod(method);</span>
+        }
+<span class="nc bnc" id="L179" title="All 2 branches missed.">        if (enableDeleteByExample) {</span>
+<span class="nc" id="L180">            method = getOtherInteger(&quot;deleteByExample&quot;, introspectedTable, tableName, 3);</span>
+<span class="nc" id="L181">            method.removeAllBodyLines();</span>
+<span class="nc" id="L182">            interface1.addMethod(method);</span>
+        }
+<span class="nc bnc" id="L184" title="All 2 branches missed.">        if (enableUpdateByExampleSelective) {</span>
+<span class="nc" id="L185">            method = getOtherInteger(&quot;updateByExampleSelective&quot;, introspectedTable, tableName, 4);</span>
+<span class="nc" id="L186">            method.removeAllBodyLines();</span>
+<span class="nc" id="L187">            interface1.addMethod(method);</span>
+        }
+<span class="nc bnc" id="L189" title="All 2 branches missed.">        if (enableUpdateByExample) {</span>
+<span class="nc" id="L190">            method = getOtherInteger(&quot;updateByExample&quot;, introspectedTable, tableName, 4);</span>
+<span class="nc" id="L191">            method.removeAllBodyLines();</span>
+<span class="nc" id="L192">            interface1.addMethod(method);</span>
+        }
+<span class="nc bnc" id="L194" title="All 2 branches missed.">        if (enableInsert) {</span>
+<span class="nc" id="L195">            method = getOtherInsertboolean(&quot;insert&quot;, introspectedTable, tableName);</span>
+<span class="nc" id="L196">            method.removeAllBodyLines();</span>
+<span class="nc" id="L197">            interface1.addMethod(method);</span>
+        }
+<span class="nc bnc" id="L199" title="All 2 branches missed.">        if (enableInsertSelective) {</span>
+<span class="nc" id="L200">            method = getOtherInsertboolean(&quot;insertSelective&quot;, introspectedTable, tableName);</span>
+<span class="nc" id="L201">            method.removeAllBodyLines();</span>
+<span class="nc" id="L202">            interface1.addMethod(method);</span>
+        }
+
+<span class="nc" id="L205">        GeneratedJavaFile file = new GeneratedJavaFile(interface1, project, context.getJavaFormatter());</span>
+<span class="nc" id="L206">        files.add(file);</span>
+<span class="nc" id="L207">    }</span>
+
+    /**
+     * 添加实现类
+     *
+     * @param introspectedTable
+     * @param tableName
+     * @param files
+     */
+    protected void addServiceImpl(TopLevelClass topLevelClass, IntrospectedTable introspectedTable, String tableName, List&lt;GeneratedJavaFile&gt; files) {
+<span class="nc" id="L217">        topLevelClass.setVisibility(JavaVisibility.PUBLIC);</span>
+        // 设置实现的接口
+<span class="nc" id="L219">        topLevelClass.addSuperInterface(interfaceType);</span>
+
+<span class="nc bnc" id="L221" title="All 2 branches missed.">        if (enableAnnotation) {</span>
+<span class="nc" id="L222">            topLevelClass.addAnnotation(&quot;@Service&quot;);</span>
+<span class="nc" id="L223">            topLevelClass.addImportedType(service);</span>
+        }
+        // 添加引用dao
+<span class="nc" id="L226">        addField(topLevelClass, tableName);</span>
+        // 添加方法
+<span class="nc" id="L228">        topLevelClass.addMethod(countByExample(introspectedTable, tableName));</span>
+<span class="nc" id="L229">        topLevelClass.addMethod(selectByPrimaryKey(introspectedTable, tableName));</span>
+<span class="nc" id="L230">        topLevelClass.addMethod(selectByExample(introspectedTable, tableName));</span>
+
+        /**
+         * type 的意义 pojo 1 ;key 2 ;example 3 ;pojo+example 4
+         */
+<span class="nc bnc" id="L235" title="All 2 branches missed.">        if (enableDeleteByPrimaryKey) {</span>
+<span class="nc" id="L236">            topLevelClass.addMethod(getOtherInteger(&quot;deleteByPrimaryKey&quot;, introspectedTable, tableName, 2));</span>
+        }
+<span class="nc bnc" id="L238" title="All 2 branches missed.">        if (enableUpdateByPrimaryKeySelective) {</span>
+<span class="nc" id="L239">            topLevelClass.addMethod(getOtherInteger(&quot;updateByPrimaryKeySelective&quot;, introspectedTable, tableName, 1));</span>
+
+        }
+<span class="nc bnc" id="L242" title="All 2 branches missed.">        if (enableUpdateByPrimaryKey) {</span>
+<span class="nc" id="L243">            topLevelClass.addMethod(getOtherInteger(&quot;updateByPrimaryKey&quot;, introspectedTable, tableName, 1));</span>
+        }
+<span class="nc bnc" id="L245" title="All 2 branches missed.">        if (enableDeleteByExample) {</span>
+<span class="nc" id="L246">            topLevelClass.addMethod(getOtherInteger(&quot;deleteByExample&quot;, introspectedTable, tableName, 3));</span>
+        }
+<span class="nc bnc" id="L248" title="All 2 branches missed.">        if (enableUpdateByExampleSelective) {</span>
+<span class="nc" id="L249">            topLevelClass.addMethod(getOtherInteger(&quot;updateByExampleSelective&quot;, introspectedTable, tableName, 4));</span>
+        }
+<span class="nc bnc" id="L251" title="All 2 branches missed.">        if (enableUpdateByExample) {</span>
+<span class="nc" id="L252">            topLevelClass.addMethod(getOtherInteger(&quot;updateByExample&quot;, introspectedTable, tableName, 4));</span>
+        }
+<span class="nc bnc" id="L254" title="All 2 branches missed.">        if (enableInsert) {</span>
+<span class="nc" id="L255">            topLevelClass.addMethod(getOtherInsertboolean(&quot;insert&quot;, introspectedTable, tableName));</span>
+        }
+<span class="nc bnc" id="L257" title="All 2 branches missed.">        if (enableInsertSelective) {</span>
+<span class="nc" id="L258">            topLevelClass.addMethod(getOtherInsertboolean(&quot;insertSelective&quot;, introspectedTable, tableName));</span>
+        }
+        // 生成文件
+<span class="nc" id="L261">        GeneratedJavaFile file = new GeneratedJavaFile(topLevelClass, project, context.getJavaFormatter());</span>
+<span class="nc" id="L262">        files.add(file);</span>
+<span class="nc" id="L263">    }</span>
+
+    /**
+     * 添加字段
+     *
+     * @param topLevelClass
+     */
+    protected void addField(TopLevelClass topLevelClass, String tableName) {
+        // 添加 dao
+<span class="nc" id="L272">        Field field = new Field();</span>
+<span class="nc" id="L273">        field.setName(toLowerCase(daoType.getShortName())); // 设置变量名</span>
+<span class="nc" id="L274">        topLevelClass.addImportedType(daoType);</span>
+<span class="nc" id="L275">        field.setType(daoType); // 类型</span>
+<span class="nc" id="L276">        field.setVisibility(JavaVisibility.PRIVATE);</span>
+<span class="nc bnc" id="L277" title="All 2 branches missed.">        if (enableAnnotation) {</span>
+<span class="nc" id="L278">            field.addAnnotation(&quot;@Autowired&quot;);</span>
+        }
+<span class="nc" id="L280">        topLevelClass.addField(field);</span>
+<span class="nc" id="L281">    }</span>
+
+    /**
+     * 添加方法
+     */
+    protected Method selectByPrimaryKey(IntrospectedTable introspectedTable, String tableName) {
+<span class="nc" id="L287">        Method method = new Method();</span>
+<span class="nc" id="L288">        method.setName(&quot;selectByPrimaryKey&quot;);</span>
+<span class="nc" id="L289">        method.setReturnType(pojoType);</span>
+<span class="nc bnc" id="L290" title="All 2 branches missed.">        if (introspectedTable.getRules().generatePrimaryKeyClass()) {</span>
+<span class="nc" id="L291">            FullyQualifiedJavaType type = new FullyQualifiedJavaType(introspectedTable.getPrimaryKeyType());</span>
+<span class="nc" id="L292">            method.addParameter(new Parameter(type, &quot;key&quot;));</span>
+<span class="nc" id="L293">        } else {</span>
+<span class="nc bnc" id="L294" title="All 2 branches missed.">            for (IntrospectedColumn introspectedColumn : introspectedTable.getPrimaryKeyColumns()) {</span>
+<span class="nc" id="L295">                FullyQualifiedJavaType type = introspectedColumn.getFullyQualifiedJavaType();</span>
+<span class="nc" id="L296">                method.addParameter(new Parameter(type, introspectedColumn.getJavaProperty()));</span>
+<span class="nc" id="L297">            }</span>
+        }
+<span class="nc" id="L299">        method.setVisibility(JavaVisibility.PUBLIC);</span>
+<span class="nc" id="L300">        StringBuilder sb = new StringBuilder();</span>
+        // method.addBodyLine(&quot;try {&quot;);
+<span class="nc" id="L302">        sb.append(&quot;return this.&quot;);</span>
+<span class="nc" id="L303">        sb.append(getDaoShort());</span>
+<span class="nc" id="L304">        sb.append(&quot;selectByPrimaryKey&quot;);</span>
+<span class="nc" id="L305">        sb.append(&quot;(&quot;);</span>
+<span class="nc bnc" id="L306" title="All 2 branches missed.">        for (IntrospectedColumn introspectedColumn : introspectedTable.getPrimaryKeyColumns()) {</span>
+<span class="nc" id="L307">            sb.append(introspectedColumn.getJavaProperty());</span>
+<span class="nc" id="L308">            sb.append(&quot;,&quot;);</span>
+<span class="nc" id="L309">        }</span>
+<span class="nc" id="L310">        sb.setLength(sb.length() - 1);</span>
+<span class="nc" id="L311">        sb.append(&quot;);&quot;);</span>
+<span class="nc" id="L312">        method.addBodyLine(sb.toString());</span>
+        // method.addBodyLine(&quot;} catch (Exception e) {&quot;);
+        // method.addBodyLine(&quot;logger.error(\&quot;Exception: \&quot;, e);&quot;);
+        // method.addBodyLine(&quot;return null;&quot;);
+        // method.addBodyLine(&quot;}&quot;);
+<span class="nc" id="L317">        return method;</span>
+    }
+
+    /**
+     * 添加方法
+     */
+    protected Method countByExample(IntrospectedTable introspectedTable, String tableName) {
+<span class="nc" id="L324">        Method method = new Method();</span>
+<span class="nc" id="L325">        method.setName(&quot;countByExample&quot;);</span>
+<span class="nc" id="L326">        method.setReturnType(FullyQualifiedJavaType.getIntInstance());</span>
+<span class="nc" id="L327">        method.addParameter(new Parameter(pojoCriteriaType, &quot;example&quot;));</span>
+<span class="nc" id="L328">        method.setVisibility(JavaVisibility.PUBLIC);</span>
+<span class="nc" id="L329">        StringBuilder sb = new StringBuilder();</span>
+<span class="nc" id="L330">        sb.append(&quot;int count = this.&quot;);</span>
+<span class="nc" id="L331">        sb.append(getDaoShort());</span>
+<span class="nc" id="L332">        sb.append(&quot;countByExample&quot;);</span>
+<span class="nc" id="L333">        sb.append(&quot;(&quot;);</span>
+<span class="nc" id="L334">        sb.append(&quot;example&quot;);</span>
+<span class="nc" id="L335">        sb.append(&quot;);&quot;);</span>
+<span class="nc" id="L336">        method.addBodyLine(sb.toString());</span>
+<span class="nc" id="L337">        method.addBodyLine(&quot;logger.debug(\&quot;count: {}\&quot;, count);&quot;);</span>
+<span class="nc" id="L338">        method.addBodyLine(&quot;return count;&quot;);</span>
+<span class="nc" id="L339">        return method;</span>
+    }
+
+    /**
+     * 添加方法
+     */
+    protected Method selectByExample(IntrospectedTable introspectedTable, String tableName) {
+<span class="nc" id="L346">        Method method = new Method();</span>
+<span class="nc" id="L347">        method.setName(&quot;selectByExample&quot;);</span>
+<span class="nc" id="L348">        method.setReturnType(new FullyQualifiedJavaType(&quot;List&lt;&quot; + tableName + &quot;&gt;&quot;));</span>
+<span class="nc" id="L349">        method.addParameter(new Parameter(pojoCriteriaType, &quot;example&quot;));</span>
+<span class="nc" id="L350">        method.setVisibility(JavaVisibility.PUBLIC);</span>
+<span class="nc" id="L351">        StringBuilder sb = new StringBuilder();</span>
+<span class="nc" id="L352">        sb.append(&quot;return this.&quot;);</span>
+<span class="nc" id="L353">        sb.append(getDaoShort());</span>
+<span class="nc bnc" id="L354" title="All 2 branches missed.">        if (introspectedTable.hasBLOBColumns()) {</span>
+<span class="nc" id="L355">            sb.append(&quot;selectByExampleWithoutBLOBs&quot;);</span>
+        } else {
+<span class="nc" id="L357">            sb.append(&quot;selectByExample&quot;);</span>
+        }
+<span class="nc" id="L359">        sb.append(&quot;(&quot;);</span>
+<span class="nc" id="L360">        sb.append(&quot;example&quot;);</span>
+<span class="nc" id="L361">        sb.append(&quot;);&quot;);</span>
+<span class="nc" id="L362">        method.addBodyLine(sb.toString());</span>
+<span class="nc" id="L363">        return method;</span>
+    }
+
+    /**
+     * 添加方法
+     */
+    protected Method getOtherInteger(String methodName, IntrospectedTable introspectedTable, String tableName, int type) {
+<span class="nc" id="L370">        Method method = new Method();</span>
+<span class="nc" id="L371">        method.setName(methodName);</span>
+<span class="nc" id="L372">        method.setReturnType(FullyQualifiedJavaType.getIntInstance());</span>
+<span class="nc" id="L373">        String params = addParams(introspectedTable, method, type);</span>
+<span class="nc" id="L374">        method.setVisibility(JavaVisibility.PUBLIC);</span>
+<span class="nc" id="L375">        StringBuilder sb = new StringBuilder();</span>
+        // method.addBodyLine(&quot;try {&quot;);
+<span class="nc" id="L377">        sb.append(&quot;return this.&quot;);</span>
+<span class="nc" id="L378">        sb.append(getDaoShort());</span>
+<span class="nc bnc" id="L379" title="All 10 branches missed.">        if (introspectedTable.hasBLOBColumns()</span>
+                &amp;&amp; (!&quot;updateByPrimaryKeySelective&quot;.equals(methodName) &amp;&amp; !&quot;deleteByPrimaryKey&quot;.equals(methodName)
+                &amp;&amp; !&quot;deleteByExample&quot;.equals(methodName) &amp;&amp; !&quot;updateByExampleSelective&quot;.equals(methodName))) {
+<span class="nc" id="L382">            sb.append(methodName + &quot;WithoutBLOBs&quot;);</span>
+        } else {
+<span class="nc" id="L384">            sb.append(methodName);</span>
+        }
+<span class="nc" id="L386">        sb.append(&quot;(&quot;);</span>
+<span class="nc" id="L387">        sb.append(params);</span>
+<span class="nc" id="L388">        sb.append(&quot;);&quot;);</span>
+<span class="nc" id="L389">        method.addBodyLine(sb.toString());</span>
+<span class="nc" id="L390">        return method;</span>
+    }
+
+    /**
+     * 添加方法
+     */
+    protected Method getOtherInsertboolean(String methodName, IntrospectedTable introspectedTable, String tableName) {
+<span class="nc" id="L397">        Method method = new Method();</span>
+<span class="nc" id="L398">        method.setName(methodName);</span>
+<span class="nc" id="L399">        method.setReturnType(returnType);</span>
+<span class="nc" id="L400">        method.addParameter(new Parameter(pojoType, &quot;record&quot;));</span>
+<span class="nc" id="L401">        method.setVisibility(JavaVisibility.PUBLIC);</span>
+<span class="nc" id="L402">        StringBuilder sb = new StringBuilder();</span>
+<span class="nc bnc" id="L403" title="All 2 branches missed.">        if (returnType == null) {</span>
+<span class="nc" id="L404">            sb.append(&quot;this.&quot;);</span>
+        } else {
+<span class="nc" id="L406">            sb.append(&quot;return this.&quot;);</span>
+        }
+<span class="nc" id="L408">        sb.append(getDaoShort());</span>
+<span class="nc" id="L409">        sb.append(methodName);</span>
+<span class="nc" id="L410">        sb.append(&quot;(&quot;);</span>
+<span class="nc" id="L411">        sb.append(&quot;record&quot;);</span>
+<span class="nc" id="L412">        sb.append(&quot;);&quot;);</span>
+<span class="nc" id="L413">        method.addBodyLine(sb.toString());</span>
+<span class="nc" id="L414">        return method;</span>
+    }
+
+    /**
+     * type 的意义 pojo 1 key 2 example 3 pojo+example 4
+     */
+    protected String addParams(IntrospectedTable introspectedTable, Method method, int type1) {
+<span class="nc bnc" id="L421" title="All 5 branches missed.">        switch (type1) {</span>
+            case 1:
+<span class="nc" id="L423">                method.addParameter(new Parameter(pojoType, &quot;record&quot;));</span>
+<span class="nc" id="L424">                return &quot;record&quot;;</span>
+            case 2:
+<span class="nc bnc" id="L426" title="All 2 branches missed.">                if (introspectedTable.getRules().generatePrimaryKeyClass()) {</span>
+<span class="nc" id="L427">                    FullyQualifiedJavaType type = new FullyQualifiedJavaType(introspectedTable.getPrimaryKeyType());</span>
+<span class="nc" id="L428">                    method.addParameter(new Parameter(type, &quot;key&quot;));</span>
+<span class="nc" id="L429">                } else {</span>
+<span class="nc bnc" id="L430" title="All 2 branches missed.">                    for (IntrospectedColumn introspectedColumn : introspectedTable.getPrimaryKeyColumns()) {</span>
+<span class="nc" id="L431">                        FullyQualifiedJavaType type = introspectedColumn.getFullyQualifiedJavaType();</span>
+<span class="nc" id="L432">                        method.addParameter(new Parameter(type, introspectedColumn.getJavaProperty()));</span>
+<span class="nc" id="L433">                    }</span>
+                }
+<span class="nc" id="L435">                StringBuffer sb = new StringBuffer();</span>
+<span class="nc bnc" id="L436" title="All 2 branches missed.">                for (IntrospectedColumn introspectedColumn : introspectedTable.getPrimaryKeyColumns()) {</span>
+<span class="nc" id="L437">                    sb.append(introspectedColumn.getJavaProperty());</span>
+<span class="nc" id="L438">                    sb.append(&quot;,&quot;);</span>
+<span class="nc" id="L439">                }</span>
+<span class="nc" id="L440">                sb.setLength(sb.length() - 1);</span>
+<span class="nc" id="L441">                return sb.toString();</span>
+            case 3:
+<span class="nc" id="L443">                method.addParameter(new Parameter(pojoCriteriaType, &quot;example&quot;));</span>
+<span class="nc" id="L444">                return &quot;example&quot;;</span>
+            case 4:
+
+<span class="nc" id="L447">                method.addParameter(0, new Parameter(pojoType, &quot;record&quot;));</span>
+<span class="nc" id="L448">                method.addParameter(1, new Parameter(pojoCriteriaType, &quot;example&quot;));</span>
+<span class="nc" id="L449">                return &quot;record, example&quot;;</span>
+            default:
+                break;
+        }
+<span class="nc" id="L453">        return null;</span>
+    }
+
+    protected void addComment(JavaElement field, String comment) {
+<span class="nc" id="L457">        StringBuilder sb = new StringBuilder();</span>
+<span class="nc" id="L458">        field.addJavaDocLine(&quot;/**&quot;);</span>
+<span class="nc" id="L459">        sb.append(&quot; * &quot;);</span>
+<span class="nc" id="L460">        comment = comment.replaceAll(&quot;\n&quot;, &quot;&lt;br&gt;\n\t * &quot;);</span>
+<span class="nc" id="L461">        sb.append(comment);</span>
+<span class="nc" id="L462">        field.addJavaDocLine(sb.toString());</span>
+<span class="nc" id="L463">        field.addJavaDocLine(&quot; */&quot;);</span>
+<span class="nc" id="L464">    }</span>
+
+    /**
+     * 添加字段
+     *
+     * @param topLevelClass
+     */
+    protected void addField(TopLevelClass topLevelClass) {
+        // 添加 success
+<span class="nc" id="L473">        Field field = new Field();</span>
+<span class="nc" id="L474">        field.setName(&quot;success&quot;); // 设置变量名</span>
+<span class="nc" id="L475">        field.setType(FullyQualifiedJavaType.getBooleanPrimitiveInstance()); // 类型</span>
+<span class="nc" id="L476">        field.setVisibility(JavaVisibility.PRIVATE);</span>
+<span class="nc" id="L477">        addComment(field, &quot;执行结果&quot;);</span>
+<span class="nc" id="L478">        topLevelClass.addField(field);</span>
+        // 设置结果
+<span class="nc" id="L480">        field = new Field();</span>
+<span class="nc" id="L481">        field.setName(&quot;message&quot;); // 设置变量名</span>
+<span class="nc" id="L482">        field.setType(FullyQualifiedJavaType.getStringInstance()); // 类型</span>
+<span class="nc" id="L483">        field.setVisibility(JavaVisibility.PRIVATE);</span>
+<span class="nc" id="L484">        addComment(field, &quot;消息结果&quot;);</span>
+<span class="nc" id="L485">        topLevelClass.addField(field);</span>
+<span class="nc" id="L486">    }</span>
+
+    /**
+     * 添加方法
+     */
+    protected void addMethod(TopLevelClass topLevelClass) {
+<span class="nc" id="L492">        Method method = new Method();</span>
+<span class="nc" id="L493">        method.setVisibility(JavaVisibility.PUBLIC);</span>
+<span class="nc" id="L494">        method.setName(&quot;setSuccess&quot;);</span>
+<span class="nc" id="L495">        method.addParameter(new Parameter(FullyQualifiedJavaType.getBooleanPrimitiveInstance(), &quot;success&quot;));</span>
+<span class="nc" id="L496">        method.addBodyLine(&quot;this.success = success;&quot;);</span>
+<span class="nc" id="L497">        topLevelClass.addMethod(method);</span>
+
+<span class="nc" id="L499">        method = new Method();</span>
+<span class="nc" id="L500">        method.setVisibility(JavaVisibility.PUBLIC);</span>
+<span class="nc" id="L501">        method.setReturnType(FullyQualifiedJavaType.getBooleanPrimitiveInstance());</span>
+<span class="nc" id="L502">        method.setName(&quot;isSuccess&quot;);</span>
+<span class="nc" id="L503">        method.addBodyLine(&quot;return success;&quot;);</span>
+<span class="nc" id="L504">        topLevelClass.addMethod(method);</span>
+
+<span class="nc" id="L506">        method = new Method();</span>
+<span class="nc" id="L507">        method.setVisibility(JavaVisibility.PUBLIC);</span>
+<span class="nc" id="L508">        method.setName(&quot;setMessage&quot;);</span>
+<span class="nc" id="L509">        method.addParameter(new Parameter(FullyQualifiedJavaType.getStringInstance(), &quot;message&quot;));</span>
+<span class="nc" id="L510">        method.addBodyLine(&quot;this.message = message;&quot;);</span>
+<span class="nc" id="L511">        topLevelClass.addMethod(method);</span>
+
+<span class="nc" id="L513">        method = new Method();</span>
+<span class="nc" id="L514">        method.setVisibility(JavaVisibility.PUBLIC);</span>
+<span class="nc" id="L515">        method.setReturnType(FullyQualifiedJavaType.getStringInstance());</span>
+<span class="nc" id="L516">        method.setName(&quot;getMessage&quot;);</span>
+<span class="nc" id="L517">        method.addBodyLine(&quot;return message;&quot;);</span>
+<span class="nc" id="L518">        topLevelClass.addMethod(method);</span>
+<span class="nc" id="L519">    }</span>
+
+    /**
+     * 添加方法
+     */
+    protected void addMethod(TopLevelClass topLevelClass, String tableName) {
+<span class="nc" id="L525">        Method method2 = new Method();</span>
+<span class="nc bnc" id="L526" title="All 2 branches missed.">        for (int i = 0; i &lt; methods.size(); i++) {</span>
+<span class="nc" id="L527">            Method method = new Method();</span>
+<span class="nc" id="L528">            method2 = methods.get(i);</span>
+<span class="nc" id="L529">            method = method2;</span>
+<span class="nc" id="L530">            method.removeAllBodyLines();</span>
+<span class="nc" id="L531">            method.removeAnnotation();</span>
+<span class="nc" id="L532">            StringBuilder sb = new StringBuilder();</span>
+<span class="nc" id="L533">            sb.append(&quot;return this.&quot;);</span>
+<span class="nc" id="L534">            sb.append(getDaoShort());</span>
+<span class="nc" id="L535">            sb.append(method.getName());</span>
+<span class="nc" id="L536">            sb.append(&quot;(&quot;);</span>
+<span class="nc" id="L537">            List&lt;Parameter&gt; list = method.getParameters();</span>
+<span class="nc bnc" id="L538" title="All 2 branches missed.">            for (int j = 0; j &lt; list.size(); j++) {</span>
+<span class="nc" id="L539">                sb.append(list.get(j).getName());</span>
+<span class="nc" id="L540">                sb.append(&quot;,&quot;);</span>
+            }
+<span class="nc" id="L542">            sb.setLength(sb.length() - 1);</span>
+<span class="nc" id="L543">            sb.append(&quot;);&quot;);</span>
+<span class="nc" id="L544">            method.addBodyLine(sb.toString());</span>
+<span class="nc" id="L545">            topLevelClass.addMethod(method);</span>
+        }
+<span class="nc" id="L547">        methods.clear();</span>
+<span class="nc" id="L548">    }</span>
+
+    /**
+     * BaseUsers to baseUsers
+     *
+     * @param tableName
+     * @return
+     */
+    protected String toLowerCase(String tableName) {
+<span class="nc" id="L557">        StringBuilder sb = new StringBuilder(tableName);</span>
+<span class="nc" id="L558">        sb.setCharAt(0, Character.toLowerCase(sb.charAt(0)));</span>
+<span class="nc" id="L559">        return sb.toString();</span>
+    }
+
+    /**
+     * BaseUsers to baseUsers
+     *
+     * @param tableName
+     * @return
+     */
+    protected String toUpperCase(String tableName) {
+<span class="nc" id="L569">        StringBuilder sb = new StringBuilder(tableName);</span>
+<span class="nc" id="L570">        sb.setCharAt(0, Character.toUpperCase(sb.charAt(0)));</span>
+<span class="nc" id="L571">        return sb.toString();</span>
+    }
+
+    /**
+     * 导入需要的类
+     */
+    private void addImport(Interface interfaces, TopLevelClass topLevelClass) {
+<span class="nc" id="L578">        interfaces.addImportedType(pojoType);</span>
+<span class="nc" id="L579">        interfaces.addImportedType(pojoCriteriaType);</span>
+<span class="nc" id="L580">        interfaces.addImportedType(listType);</span>
+<span class="nc" id="L581">        topLevelClass.addImportedType(daoType);</span>
+<span class="nc" id="L582">        topLevelClass.addImportedType(interfaceType);</span>
+<span class="nc" id="L583">        topLevelClass.addImportedType(pojoType);</span>
+<span class="nc" id="L584">        topLevelClass.addImportedType(pojoCriteriaType);</span>
+<span class="nc" id="L585">        topLevelClass.addImportedType(listType);</span>
+<span class="nc" id="L586">        topLevelClass.addImportedType(slf4jLogger);</span>
+<span class="nc" id="L587">        topLevelClass.addImportedType(slf4jLoggerFactory);</span>
+<span class="nc bnc" id="L588" title="All 2 branches missed.">        if (enableAnnotation) {</span>
+<span class="nc" id="L589">            topLevelClass.addImportedType(service);</span>
+<span class="nc" id="L590">            topLevelClass.addImportedType(autowired);</span>
+        }
+<span class="nc" id="L592">    }</span>
+
+    /**
+     * 导入logger
+     */
+    private void addLogger(TopLevelClass topLevelClass) {
+<span class="nc" id="L598">        Field field = new Field();</span>
+<span class="nc" id="L599">        field.setFinal(true);</span>
+<span class="nc" id="L600">        field.setInitializationString(&quot;LoggerFactory.getLogger(&quot; + topLevelClass.getType().getShortName() + &quot;.class)&quot;); // 设置值</span>
+<span class="nc" id="L601">        field.setName(&quot;logger&quot;); // 设置变量名</span>
+<span class="nc" id="L602">        field.setStatic(true);</span>
+<span class="nc" id="L603">        field.setType(new FullyQualifiedJavaType(&quot;Logger&quot;)); // 类型</span>
+<span class="nc" id="L604">        field.setVisibility(JavaVisibility.PRIVATE);</span>
+<span class="nc" id="L605">        topLevelClass.addField(field);</span>
+<span class="nc" id="L606">    }</span>
+
+    private String getDaoShort() {
+<span class="nc" id="L609">        return toLowerCase(daoType.getShortName()) + &quot;.&quot;;</span>
+    }
+
+    public boolean clientInsertMethodGenerated(Method method, Interface interfaze, IntrospectedTable introspectedTable) {
+<span class="nc" id="L613">        returnType = method.getReturnType();</span>
+<span class="nc" id="L614">        return true;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.7.201606060606</span></div></body></html>

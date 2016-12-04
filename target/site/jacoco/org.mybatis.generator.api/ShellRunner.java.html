@@ -1,0 +1,241 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="zh"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ShellRunner.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">MyBatis Generator Core</a> &gt; <a href="index.source.html" class="el_package">org.mybatis.generator.api</a> &gt; <span class="el_source">ShellRunner.java</span></div><h1>ShellRunner.java</h1><pre class="source lang-java linenums">/**
+ * Copyright 2006-2016 the original author or authors.
+ * &lt;p&gt;
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * &lt;p&gt;
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * &lt;p&gt;
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package org.mybatis.generator.api;
+
+import org.mybatis.generator.config.Configuration;
+import org.mybatis.generator.config.xml.ConfigurationParser;
+import org.mybatis.generator.exception.InvalidConfigurationException;
+import org.mybatis.generator.exception.XMLParserException;
+import org.mybatis.generator.internal.DefaultShellCallback;
+import org.mybatis.generator.logging.LogFactory;
+
+import java.io.File;
+import java.io.IOException;
+import java.sql.SQLException;
+import java.util.*;
+
+import static org.mybatis.generator.internal.util.messages.Messages.getString;
+
+/**
+ * This class allows the code generator to be run from the command line.
+ *  插件默认使用启动:java -jar mybatis-generator-core-1.3.2.jar -configfile generatorConfig.xml -overwrite
+ * @author Jeff Butler
+ */
+<span class="nc" id="L37">public class ShellRunner {</span>
+    private static final String CONFIG_FILE = &quot;-configfile&quot;; //$NON-NLS-1$
+    private static final String OVERWRITE = &quot;-overwrite&quot;; //$NON-NLS-1$
+    private static final String CONTEXT_IDS = &quot;-contextids&quot;; //$NON-NLS-1$
+    private static final String TABLES = &quot;-tables&quot;; //$NON-NLS-1$
+    private static final String VERBOSE = &quot;-verbose&quot;; //$NON-NLS-1$
+    private static final String FORCE_JAVA_LOGGING = &quot;-forceJavaLogging&quot;; //$NON-NLS-1$
+    private static final String HELP_1 = &quot;-?&quot;; //$NON-NLS-1$
+    private static final String HELP_2 = &quot;-h&quot;; //$NON-NLS-1$
+
+    public static void main(String[] args) {
+
+<span class="nc bnc" id="L49" title="All 2 branches missed.">        if (args.length == 0) {</span>
+<span class="nc" id="L50">            usage();</span>
+<span class="nc" id="L51">            System.exit(0);</span>
+<span class="nc" id="L52">            return; // only to satisfy compiler, never returns</span>
+        }
+
+        //解析命令行
+<span class="nc" id="L56">        Map&lt;String, String&gt; arguments = parseCommandLine(args);</span>
+
+<span class="nc bnc" id="L58" title="All 2 branches missed.">        if (arguments.containsKey(HELP_1)) {</span>
+<span class="nc" id="L59">            usage();</span>
+<span class="nc" id="L60">            System.exit(0);</span>
+<span class="nc" id="L61">            return; // only to satisfy compiler, never returns</span>
+        }
+
+<span class="nc bnc" id="L64" title="All 2 branches missed.">        if (!arguments.containsKey(CONFIG_FILE)) {</span>
+<span class="nc" id="L65">            writeLine(getString(&quot;RuntimeError.0&quot;)); //$NON-NLS-1$</span>
+<span class="nc" id="L66">            return;</span>
+        }
+
+        //创建一个警告列表，整个MBG运行过程中的所有警告信息都放在这个列表中，执行完成后统一System.out
+<span class="nc" id="L70">        List&lt;String&gt; warnings = new ArrayList&lt;String&gt;();</span>
+
+        //得到generatorConfig.xml文件
+<span class="nc" id="L73">        String configfile = arguments.get(CONFIG_FILE);</span>
+<span class="nc" id="L74">        File configurationFile = new File(configfile);</span>
+<span class="nc bnc" id="L75" title="All 2 branches missed.">        if (!configurationFile.exists()) {</span>
+<span class="nc" id="L76">            writeLine(getString(&quot;RuntimeError.1&quot;, configfile)); //$NON-NLS-1$</span>
+<span class="nc" id="L77">            return;</span>
+        }
+
+        //如果参数有tables，得到table名称列表
+<span class="nc" id="L81">        Set&lt;String&gt; fullyqualifiedTables = new HashSet&lt;String&gt;();</span>
+<span class="nc bnc" id="L82" title="All 2 branches missed.">        if (arguments.containsKey(TABLES)) {</span>
+<span class="nc" id="L83">            StringTokenizer st = new StringTokenizer(arguments.get(TABLES), &quot;,&quot;); //$NON-NLS-1$</span>
+<span class="nc bnc" id="L84" title="All 2 branches missed.">            while (st.hasMoreTokens()) {</span>
+<span class="nc" id="L85">                String s = st.nextToken().trim();</span>
+<span class="nc bnc" id="L86" title="All 2 branches missed.">                if (s.length() &gt; 0) {</span>
+<span class="nc" id="L87">                    fullyqualifiedTables.add(s);</span>
+                }
+<span class="nc" id="L89">            }</span>
+        }
+
+        //如果参数有contextids，得到context名称列表
+<span class="nc" id="L93">        Set&lt;String&gt; contexts = new HashSet&lt;String&gt;();</span>
+<span class="nc bnc" id="L94" title="All 2 branches missed.">        if (arguments.containsKey(CONTEXT_IDS)) {</span>
+<span class="nc" id="L95">            StringTokenizer st = new StringTokenizer(</span>
+                    arguments.get(CONTEXT_IDS), &quot;,&quot;); //$NON-NLS-1$
+<span class="nc bnc" id="L97" title="All 2 branches missed.">            while (st.hasMoreTokens()) {</span>
+<span class="nc" id="L98">                String s = st.nextToken().trim();</span>
+<span class="nc bnc" id="L99" title="All 2 branches missed.">                if (s.length() &gt; 0) {</span>
+<span class="nc" id="L100">                    contexts.add(s);</span>
+                }
+<span class="nc" id="L102">            }</span>
+        }
+
+        try {
+            //创建配置解析器
+<span class="nc" id="L107">            ConfigurationParser cp = new ConfigurationParser(warnings);</span>
+
+            //调用配置解析器创建配置对象（Configuration对象非常简单，可以简单理解为包含两个列表，一个列表是List&lt;Context&gt; contexts，
+            // 包含了解析出来的Context对象，一个是List&lt;String&gt; classPathEntries，包含了配置的classPathEntry的location值）
+<span class="nc" id="L111">            Configuration config = cp.parseConfiguration(configurationFile);</span>
+
+            //创建一个默认的ShellCallback对象，之前说过，shellcallback接口主要用来处理文件的创建和合并，传入overwrite参数；默认的shellcallback是不支持文件合并的；
+<span class="nc" id="L114">            DefaultShellCallback shellCallback = new DefaultShellCallback(</span>
+                    arguments.containsKey(OVERWRITE));
+
+            //创建一个MyBatisGenerator对象。MyBatisGenerator类是真正用来执行生成动作的类
+<span class="nc" id="L118">            MyBatisGenerator myBatisGenerator = new MyBatisGenerator(config, shellCallback, warnings);</span>
+
+            //创建一个默认的ProgressCallback对象，之前说过，在MBG执行过程中在一定的执行步骤结束后调用ProgressCallback对象的方法，达到执行过程监控的效果；
+            //如果在执行ShellRunner是传入了-verbose参数，那么创建一个VerboseProgressCallback（VerboseProgressCallback只是调用了System.out打印出了执行过程而已）
+<span class="nc bnc" id="L122" title="All 2 branches missed.">            ProgressCallback progressCallback = arguments.containsKey(VERBOSE) ? new VerboseProgressCallback()</span>
+                    : null;
+
+            //执行真正的MBG创建过程
+            //注意，这里的contexts是通过-contextids传入的需要的上下文id列表；
+            //fullyqualifiedTables是通过-tables传入的本次需要生成的table名称列表；
+<span class="nc" id="L128">            myBatisGenerator.generate(progressCallback, contexts, fullyqualifiedTables);</span>
+
+<span class="nc" id="L130">        } catch (XMLParserException e) {</span>
+<span class="nc" id="L131">            writeLine(getString(&quot;Progress.3&quot;)); //$NON-NLS-1$</span>
+<span class="nc" id="L132">            writeLine();</span>
+<span class="nc bnc" id="L133" title="All 2 branches missed.">            for (String error : e.getErrors()) {</span>
+<span class="nc" id="L134">                writeLine(error);</span>
+<span class="nc" id="L135">            }</span>
+
+<span class="nc" id="L137">            return;</span>
+<span class="nc" id="L138">        } catch (SQLException e) {</span>
+<span class="nc" id="L139">            e.printStackTrace();</span>
+<span class="nc" id="L140">            return;</span>
+<span class="nc" id="L141">        } catch (IOException e) {</span>
+<span class="nc" id="L142">            e.printStackTrace();</span>
+<span class="nc" id="L143">            return;</span>
+<span class="nc" id="L144">        } catch (InvalidConfigurationException e) {</span>
+<span class="nc" id="L145">            writeLine(getString(&quot;Progress.16&quot;)); //$NON-NLS-1$</span>
+<span class="nc bnc" id="L146" title="All 2 branches missed.">            for (String error : e.getErrors()) {</span>
+<span class="nc" id="L147">                writeLine(error);</span>
+<span class="nc" id="L148">            }</span>
+<span class="nc" id="L149">            return;</span>
+<span class="nc" id="L150">        } catch (InterruptedException e) {</span>
+            // ignore (will never happen with the DefaultShellCallback)
+<span class="nc" id="L152">        }</span>
+
+        //输出警告信息
+<span class="nc bnc" id="L155" title="All 2 branches missed.">        for (String warning : warnings) {</span>
+<span class="nc" id="L156">            writeLine(warning);</span>
+<span class="nc" id="L157">        }</span>
+
+<span class="nc bnc" id="L159" title="All 2 branches missed.">        if (warnings.size() == 0) {</span>
+<span class="nc" id="L160">            writeLine(getString(&quot;Progress.4&quot;)); //$NON-NLS-1$</span>
+        } else {
+<span class="nc" id="L162">            writeLine();</span>
+<span class="nc" id="L163">            writeLine(getString(&quot;Progress.5&quot;)); //$NON-NLS-1$</span>
+        }
+<span class="nc" id="L165">    }</span>
+
+    private static void usage() {
+<span class="nc" id="L168">        String lines = getString(&quot;Usage.Lines&quot;); //$NON-NLS-1$</span>
+<span class="nc" id="L169">        int iLines = Integer.parseInt(lines);</span>
+<span class="nc bnc" id="L170" title="All 2 branches missed.">        for (int i = 0; i &lt; iLines; i++) {</span>
+<span class="nc" id="L171">            String key = &quot;Usage.&quot; + i; //$NON-NLS-1$</span>
+<span class="nc" id="L172">            writeLine(getString(key));</span>
+        }
+<span class="nc" id="L174">    }</span>
+
+    private static void writeLine(String message) {
+<span class="nc" id="L177">        System.out.println(message);</span>
+<span class="nc" id="L178">    }</span>
+
+    private static void writeLine() {
+<span class="nc" id="L181">        System.out.println();</span>
+<span class="nc" id="L182">    }</span>
+
+    //解析命令行
+    private static Map&lt;String, String&gt; parseCommandLine(String[] args) {
+<span class="nc" id="L186">        List&lt;String&gt; errors = new ArrayList&lt;String&gt;();</span>
+<span class="nc" id="L187">        Map&lt;String, String&gt; arguments = new HashMap&lt;String, String&gt;();</span>
+
+<span class="nc bnc" id="L189" title="All 2 branches missed.">        for (int i = 0; i &lt; args.length; i++) {</span>
+<span class="nc bnc" id="L190" title="All 2 branches missed.">            if (CONFIG_FILE.equalsIgnoreCase(args[i])) {</span>
+<span class="nc bnc" id="L191" title="All 2 branches missed.">                if ((i + 1) &lt; args.length) {</span>
+<span class="nc" id="L192">                    arguments.put(CONFIG_FILE, args[i + 1]);</span>
+                } else {
+<span class="nc" id="L194">                    errors.add(getString(</span>
+                            &quot;RuntimeError.19&quot;, CONFIG_FILE)); //$NON-NLS-1$
+                }
+<span class="nc" id="L197">                i++;</span>
+<span class="nc bnc" id="L198" title="All 2 branches missed.">            } else if (OVERWRITE.equalsIgnoreCase(args[i])) {</span>
+<span class="nc" id="L199">                arguments.put(OVERWRITE, &quot;Y&quot;); //$NON-NLS-1$</span>
+<span class="nc bnc" id="L200" title="All 2 branches missed.">            } else if (VERBOSE.equalsIgnoreCase(args[i])) {</span>
+<span class="nc" id="L201">                arguments.put(VERBOSE, &quot;Y&quot;); //$NON-NLS-1$</span>
+<span class="nc bnc" id="L202" title="All 2 branches missed.">            } else if (HELP_1.equalsIgnoreCase(args[i])) {</span>
+<span class="nc" id="L203">                arguments.put(HELP_1, &quot;Y&quot;); //$NON-NLS-1$</span>
+<span class="nc bnc" id="L204" title="All 2 branches missed.">            } else if (HELP_2.equalsIgnoreCase(args[i])) {</span>
+                // put HELP_1 in the map here too - so we only
+                // have to check for one entry in the mainline
+<span class="nc" id="L207">                arguments.put(HELP_1, &quot;Y&quot;); //$NON-NLS-1$</span>
+<span class="nc bnc" id="L208" title="All 2 branches missed.">            } else if (FORCE_JAVA_LOGGING.equalsIgnoreCase(args[i])) {</span>
+<span class="nc" id="L209">                LogFactory.forceJavaLogging();</span>
+<span class="nc bnc" id="L210" title="All 2 branches missed.">            } else if (CONTEXT_IDS.equalsIgnoreCase(args[i])) {</span>
+<span class="nc bnc" id="L211" title="All 2 branches missed.">                if ((i + 1) &lt; args.length) {</span>
+<span class="nc" id="L212">                    arguments.put(CONTEXT_IDS, args[i + 1]);</span>
+                } else {
+<span class="nc" id="L214">                    errors.add(getString(</span>
+                            &quot;RuntimeError.19&quot;, CONTEXT_IDS)); //$NON-NLS-1$
+                }
+<span class="nc" id="L217">                i++;</span>
+<span class="nc bnc" id="L218" title="All 2 branches missed.">            } else if (TABLES.equalsIgnoreCase(args[i])) {</span>
+<span class="nc bnc" id="L219" title="All 2 branches missed.">                if ((i + 1) &lt; args.length) {</span>
+<span class="nc" id="L220">                    arguments.put(TABLES, args[i + 1]);</span>
+                } else {
+<span class="nc" id="L222">                    errors.add(getString(&quot;RuntimeError.19&quot;, TABLES)); //$NON-NLS-1$</span>
+                }
+<span class="nc" id="L224">                i++;</span>
+            } else {
+<span class="nc" id="L226">                errors.add(getString(&quot;RuntimeError.20&quot;, args[i])); //$NON-NLS-1$</span>
+            }
+        }
+
+<span class="nc bnc" id="L230" title="All 2 branches missed.">        if (!errors.isEmpty()) {</span>
+<span class="nc bnc" id="L231" title="All 2 branches missed.">            for (String error : errors) {</span>
+<span class="nc" id="L232">                writeLine(error);</span>
+<span class="nc" id="L233">            }</span>
+
+<span class="nc" id="L235">            System.exit(-1);</span>
+        }
+
+<span class="nc" id="L238">        return arguments;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.7.201606060606</span></div></body></html>

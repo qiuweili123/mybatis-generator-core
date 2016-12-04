@@ -1,0 +1,338 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wepiao.bd.sport.dao.ItemPuboffMapper">
+  <resultMap id="BaseResultMap" type="com.wepiao.bd.sport.bean.ItemPuboff">
+    <id column="id" jdbcType="VARCHAR" property="id" />
+    <result column="item_id" jdbcType="VARCHAR" property="itemId" />
+    <result column="business_id" jdbcType="VARCHAR" property="businessId" />
+    <result column="agency_fees" jdbcType="REAL" property="agencyFees" />
+    <result column="order_buy_num" jdbcType="INTEGER" property="orderBuyNum" />
+    <result column="user_buy_num" jdbcType="INTEGER" property="userBuyNum" />
+    <result column="buy_priority_type" jdbcType="INTEGER" property="buyPriorityType" />
+    <result column="buy_priority_param" jdbcType="VARCHAR" property="buyPriorityParam" />
+    <result column="sort_by" jdbcType="INTEGER" property="sortBy" />
+    <result column="tag" jdbcType="VARCHAR" property="tag" />
+    <result column="pubon_time" jdbcType="BIGINT" property="pubonTime" />
+    <result column="show_buy_num" jdbcType="INTEGER" property="showBuyNum" />
+    <result column="puboff_time" jdbcType="BIGINT" property="puboffTime" />
+  </resultMap>
+  <sql id="Example_Where_Clause">
+    <where>
+      <foreach collection="oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause">
+    <where>
+      <foreach collection="example.oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List">
+    id, item_id, business_id, agency_fees, order_buy_num, user_buy_num, buy_priority_type, 
+    buy_priority_param, sort_by, tag, pubon_time, show_buy_num, puboff_time
+  </sql>
+  <select id="selectByExample" parameterType="com.wepiao.bd.sport.bean.ItemPuboffCriteria" resultMap="BaseResultMap">
+    select
+    <if test="distinct">
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from item_puboff
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null">
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from item_puboff
+    where id = #{id,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+    delete from item_puboff
+    where id = #{id,jdbcType=VARCHAR}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.wepiao.bd.sport.bean.ItemPuboffCriteria">
+    delete from item_puboff
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.wepiao.bd.sport.bean.ItemPuboff">
+    insert into item_puboff (id, item_id, business_id, 
+      agency_fees, order_buy_num, user_buy_num, 
+      buy_priority_type, buy_priority_param, sort_by, 
+      tag, pubon_time, show_buy_num, 
+      puboff_time)
+    values (#{id,jdbcType=VARCHAR}, #{itemId,jdbcType=VARCHAR}, #{businessId,jdbcType=VARCHAR}, 
+      #{agencyFees,jdbcType=REAL}, #{orderBuyNum,jdbcType=INTEGER}, #{userBuyNum,jdbcType=INTEGER}, 
+      #{buyPriorityType,jdbcType=INTEGER}, #{buyPriorityParam,jdbcType=VARCHAR}, #{sortBy,jdbcType=INTEGER}, 
+      #{tag,jdbcType=VARCHAR}, #{pubonTime,jdbcType=BIGINT}, #{showBuyNum,jdbcType=INTEGER}, 
+      #{puboffTime,jdbcType=BIGINT})
+  </insert>
+  <insert id="insertSelective" parameterType="com.wepiao.bd.sport.bean.ItemPuboff">
+    insert into item_puboff
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="itemId != null">
+        item_id,
+      </if>
+      <if test="businessId != null">
+        business_id,
+      </if>
+      <if test="agencyFees != null">
+        agency_fees,
+      </if>
+      <if test="orderBuyNum != null">
+        order_buy_num,
+      </if>
+      <if test="userBuyNum != null">
+        user_buy_num,
+      </if>
+      <if test="buyPriorityType != null">
+        buy_priority_type,
+      </if>
+      <if test="buyPriorityParam != null">
+        buy_priority_param,
+      </if>
+      <if test="sortBy != null">
+        sort_by,
+      </if>
+      <if test="tag != null">
+        tag,
+      </if>
+      <if test="pubonTime != null">
+        pubon_time,
+      </if>
+      <if test="showBuyNum != null">
+        show_buy_num,
+      </if>
+      <if test="puboffTime != null">
+        puboff_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=VARCHAR},
+      </if>
+      <if test="itemId != null">
+        #{itemId,jdbcType=VARCHAR},
+      </if>
+      <if test="businessId != null">
+        #{businessId,jdbcType=VARCHAR},
+      </if>
+      <if test="agencyFees != null">
+        #{agencyFees,jdbcType=REAL},
+      </if>
+      <if test="orderBuyNum != null">
+        #{orderBuyNum,jdbcType=INTEGER},
+      </if>
+      <if test="userBuyNum != null">
+        #{userBuyNum,jdbcType=INTEGER},
+      </if>
+      <if test="buyPriorityType != null">
+        #{buyPriorityType,jdbcType=INTEGER},
+      </if>
+      <if test="buyPriorityParam != null">
+        #{buyPriorityParam,jdbcType=VARCHAR},
+      </if>
+      <if test="sortBy != null">
+        #{sortBy,jdbcType=INTEGER},
+      </if>
+      <if test="tag != null">
+        #{tag,jdbcType=VARCHAR},
+      </if>
+      <if test="pubonTime != null">
+        #{pubonTime,jdbcType=BIGINT},
+      </if>
+      <if test="showBuyNum != null">
+        #{showBuyNum,jdbcType=INTEGER},
+      </if>
+      <if test="puboffTime != null">
+        #{puboffTime,jdbcType=BIGINT},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.wepiao.bd.sport.bean.ItemPuboffCriteria" resultType="java.lang.Long">
+    select count(*) from item_puboff
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map">
+    update item_puboff
+    <set>
+      <if test="record.id != null">
+        id = #{record.id,jdbcType=VARCHAR},
+      </if>
+      <if test="record.itemId != null">
+        item_id = #{record.itemId,jdbcType=VARCHAR},
+      </if>
+      <if test="record.businessId != null">
+        business_id = #{record.businessId,jdbcType=VARCHAR},
+      </if>
+      <if test="record.agencyFees != null">
+        agency_fees = #{record.agencyFees,jdbcType=REAL},
+      </if>
+      <if test="record.orderBuyNum != null">
+        order_buy_num = #{record.orderBuyNum,jdbcType=INTEGER},
+      </if>
+      <if test="record.userBuyNum != null">
+        user_buy_num = #{record.userBuyNum,jdbcType=INTEGER},
+      </if>
+      <if test="record.buyPriorityType != null">
+        buy_priority_type = #{record.buyPriorityType,jdbcType=INTEGER},
+      </if>
+      <if test="record.buyPriorityParam != null">
+        buy_priority_param = #{record.buyPriorityParam,jdbcType=VARCHAR},
+      </if>
+      <if test="record.sortBy != null">
+        sort_by = #{record.sortBy,jdbcType=INTEGER},
+      </if>
+      <if test="record.tag != null">
+        tag = #{record.tag,jdbcType=VARCHAR},
+      </if>
+      <if test="record.pubonTime != null">
+        pubon_time = #{record.pubonTime,jdbcType=BIGINT},
+      </if>
+      <if test="record.showBuyNum != null">
+        show_buy_num = #{record.showBuyNum,jdbcType=INTEGER},
+      </if>
+      <if test="record.puboffTime != null">
+        puboff_time = #{record.puboffTime,jdbcType=BIGINT},
+      </if>
+    </set>
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map">
+    update item_puboff
+    set id = #{record.id,jdbcType=VARCHAR},
+      item_id = #{record.itemId,jdbcType=VARCHAR},
+      business_id = #{record.businessId,jdbcType=VARCHAR},
+      agency_fees = #{record.agencyFees,jdbcType=REAL},
+      order_buy_num = #{record.orderBuyNum,jdbcType=INTEGER},
+      user_buy_num = #{record.userBuyNum,jdbcType=INTEGER},
+      buy_priority_type = #{record.buyPriorityType,jdbcType=INTEGER},
+      buy_priority_param = #{record.buyPriorityParam,jdbcType=VARCHAR},
+      sort_by = #{record.sortBy,jdbcType=INTEGER},
+      tag = #{record.tag,jdbcType=VARCHAR},
+      pubon_time = #{record.pubonTime,jdbcType=BIGINT},
+      show_buy_num = #{record.showBuyNum,jdbcType=INTEGER},
+      puboff_time = #{record.puboffTime,jdbcType=BIGINT}
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.wepiao.bd.sport.bean.ItemPuboff">
+    update item_puboff
+    <set>
+      <if test="itemId != null">
+        item_id = #{itemId,jdbcType=VARCHAR},
+      </if>
+      <if test="businessId != null">
+        business_id = #{businessId,jdbcType=VARCHAR},
+      </if>
+      <if test="agencyFees != null">
+        agency_fees = #{agencyFees,jdbcType=REAL},
+      </if>
+      <if test="orderBuyNum != null">
+        order_buy_num = #{orderBuyNum,jdbcType=INTEGER},
+      </if>
+      <if test="userBuyNum != null">
+        user_buy_num = #{userBuyNum,jdbcType=INTEGER},
+      </if>
+      <if test="buyPriorityType != null">
+        buy_priority_type = #{buyPriorityType,jdbcType=INTEGER},
+      </if>
+      <if test="buyPriorityParam != null">
+        buy_priority_param = #{buyPriorityParam,jdbcType=VARCHAR},
+      </if>
+      <if test="sortBy != null">
+        sort_by = #{sortBy,jdbcType=INTEGER},
+      </if>
+      <if test="tag != null">
+        tag = #{tag,jdbcType=VARCHAR},
+      </if>
+      <if test="pubonTime != null">
+        pubon_time = #{pubonTime,jdbcType=BIGINT},
+      </if>
+      <if test="showBuyNum != null">
+        show_buy_num = #{showBuyNum,jdbcType=INTEGER},
+      </if>
+      <if test="puboffTime != null">
+        puboff_time = #{puboffTime,jdbcType=BIGINT},
+      </if>
+    </set>
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.wepiao.bd.sport.bean.ItemPuboff">
+    update item_puboff
+    set item_id = #{itemId,jdbcType=VARCHAR},
+      business_id = #{businessId,jdbcType=VARCHAR},
+      agency_fees = #{agencyFees,jdbcType=REAL},
+      order_buy_num = #{orderBuyNum,jdbcType=INTEGER},
+      user_buy_num = #{userBuyNum,jdbcType=INTEGER},
+      buy_priority_type = #{buyPriorityType,jdbcType=INTEGER},
+      buy_priority_param = #{buyPriorityParam,jdbcType=VARCHAR},
+      sort_by = #{sortBy,jdbcType=INTEGER},
+      tag = #{tag,jdbcType=VARCHAR},
+      pubon_time = #{pubonTime,jdbcType=BIGINT},
+      show_buy_num = #{showBuyNum,jdbcType=INTEGER},
+      puboff_time = #{puboffTime,jdbcType=BIGINT}
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+</mapper>

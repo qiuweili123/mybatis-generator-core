@@ -1,0 +1,231 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="zh"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ConfigurationParser.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">MyBatis Generator Core</a> &gt; <a href="index.source.html" class="el_package">org.mybatis.generator.config.xml</a> &gt; <span class="el_source">ConfigurationParser.java</span></div><h1>ConfigurationParser.java</h1><pre class="source lang-java linenums">/**
+ * Copyright 2006-2016 the original author or authors.
+ * &lt;p&gt;
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * &lt;p&gt;
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * &lt;p&gt;
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+/*
+ *  Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
+package org.mybatis.generator.config.xml;
+
+import org.mybatis.generator.codegen.XmlConstants;
+import org.mybatis.generator.config.Configuration;
+import org.mybatis.generator.exception.XMLParserException;
+import org.w3c.dom.Document;
+import org.w3c.dom.DocumentType;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
+import org.xml.sax.SAXParseException;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import java.io.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Properties;
+
+import static org.mybatis.generator.internal.util.messages.Messages.getString;
+
+public class ConfigurationParser {
+
+    private List&lt;String&gt; warnings;
+    private List&lt;String&gt; parseErrors;
+    private Properties extraProperties;
+
+    public ConfigurationParser(List&lt;String&gt; warnings) {
+<span class="nc" id="L59">        this(null, warnings);</span>
+<span class="nc" id="L60">    }</span>
+
+    /**
+     * This constructor accepts a properties object which may be used to specify
+     * an additional property set.  Typically this property set will be Ant or Maven properties
+     * specified in the build.xml file or the POM.
+     *
+     * If there are name collisions between the different property sets, they will be 
+     * resolved in this order:
+     *
+     * &lt;ol&gt;
+     *   &lt;li&gt;System properties take highest precedence&lt;/li&gt;
+     *   &lt;li&gt;Properties specified in the &amp;lt;properties&amp;gt; configuration
+     *       element are next&lt;/li&gt;
+     *   &lt;li&gt;Properties specified in this &quot;extra&quot; property set are
+     *       lowest precedence.&lt;/li&gt;
+     * &lt;/ol&gt;
+     * 初始化配置解析器中的一些基本数据内容
+     * @param extraProperties an (optional) set of properties used to resolve property
+     *   references in the configuration file
+     * @param warnings
+     */
+    public ConfigurationParser(Properties extraProperties, List&lt;String&gt; warnings) {
+<span class="nc" id="L83">        super();</span>
+
+        //properties：存放的系统配置信息
+<span class="nc" id="L86">        this.extraProperties = extraProperties;</span>
+
+<span class="nc bnc" id="L88" title="All 2 branches missed.">        if (warnings == null) {</span>
+            //warnings：存放的解析中的警告信息
+<span class="nc" id="L90">            this.warnings = new ArrayList&lt;String&gt;();</span>
+        } else {
+<span class="nc" id="L92">            this.warnings = warnings;</span>
+        }
+
+<span class="nc" id="L95">        parseErrors = new ArrayList&lt;String&gt;();</span>
+<span class="nc" id="L96">    }</span>
+
+    public Configuration parseConfiguration(File inputFile) throws IOException,
+            XMLParserException {
+
+<span class="nc" id="L101">        FileReader fr = new FileReader(inputFile);</span>
+
+<span class="nc" id="L103">        return parseConfiguration(fr);</span>
+    }
+
+    public Configuration parseConfiguration(Reader reader) throws IOException,
+            XMLParserException {
+
+<span class="nc" id="L109">        InputSource is = new InputSource(reader);</span>
+
+<span class="nc" id="L111">        return parseConfiguration(is);</span>
+    }
+
+    /**
+     * 执行配置解析，创建配置对象
+     *
+     * @param inputStream
+     * @return
+     * @throws IOException
+     * @throws XMLParserException
+     */
+    public Configuration parseConfiguration(InputStream inputStream)
+            throws IOException, XMLParserException {
+
+<span class="nc" id="L125">        InputSource is = new InputSource(inputStream);</span>
+
+<span class="nc" id="L127">        return parseConfiguration(is);</span>
+    }
+
+    private Configuration parseConfiguration(InputSource inputSource)
+            throws IOException, XMLParserException {
+<span class="nc" id="L132">        parseErrors.clear();</span>
+
+        //使用DOM解析器解析XML
+<span class="nc" id="L135">        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();</span>
+<span class="nc" id="L136">        factory.setValidating(true);</span>
+
+        try {
+<span class="nc" id="L139">            DocumentBuilder builder = factory.newDocumentBuilder();</span>
+
+            //设置实体对象处理器（对于MyBatis3来说，就是处理org/mybatis/generator/config/xml/mybatis-generator-config_1_0.dtd验证），
+<span class="nc" id="L142">            builder.setEntityResolver(new ParserEntityResolver());</span>
+
+            //设置解析错误处理器，把解析过程中的异常和警告保存到warnings和parseErrors两个String列表中；
+<span class="nc" id="L145">            ParserErrorHandler handler = new ParserErrorHandler(warnings,</span>
+                    parseErrors);
+<span class="nc" id="L147">            builder.setErrorHandler(handler);</span>
+
+<span class="nc" id="L149">            Document document = null;</span>
+            try {
+                //得到配置文件对应的DOM对象；
+<span class="nc" id="L152">                document = builder.parse(inputSource);</span>
+<span class="nc" id="L153">            } catch (SAXParseException e) {</span>
+<span class="nc" id="L154">                throw new XMLParserException(parseErrors);</span>
+<span class="nc" id="L155">            } catch (SAXException e) {</span>
+<span class="nc bnc" id="L156" title="All 2 branches missed.">                if (e.getException() == null) {</span>
+<span class="nc" id="L157">                    parseErrors.add(e.getMessage());</span>
+                } else {
+<span class="nc" id="L159">                    parseErrors.add(e.getException().getMessage());</span>
+                }
+<span class="nc" id="L161">            }</span>
+
+<span class="nc bnc" id="L163" title="All 2 branches missed.">            if (parseErrors.size() &gt; 0) {</span>
+<span class="nc" id="L164">                throw new XMLParserException(parseErrors);</span>
+            }
+
+            //配置对象；
+            Configuration config;
+<span class="nc" id="L169">            Element rootNode = document.getDocumentElement();</span>
+
+            //得到XML文件的xml描述符；
+<span class="nc" id="L172">            DocumentType docType = document.getDoctype();</span>
+<span class="nc bnc" id="L173" title="All 4 branches missed.">            if (rootNode.getNodeType() == Node.ELEMENT_NODE</span>
+                    &amp;&amp; docType.getPublicId().equals(
+                    XmlConstants.IBATOR_CONFIG_PUBLIC_ID)) {
+
+                //如果xml的PUBLIC_ID为-//Apache Software Foundation//DTD Apache iBATIS Ibator Configuration 1.0//EN，则执行解析ibatis过程；
+<span class="nc" id="L178">                config = parseIbatorConfiguration(rootNode);</span>
+<span class="nc bnc" id="L179" title="All 4 branches missed.">            } else if (rootNode.getNodeType() == Node.ELEMENT_NODE</span>
+                    &amp;&amp; docType.getPublicId().equals(
+                    XmlConstants.MYBATIS_GENERATOR_CONFIG_PUBLIC_ID)) {
+
+                //如果xml的PUBLIC_ID为-//mybatis.org//DTD MyBatis Generator Configuration 1.0//EN，则执行解析mybatis过程；
+<span class="nc" id="L184">                config = parseMyBatisGeneratorConfiguration(rootNode);</span>
+            } else {
+<span class="nc" id="L186">                throw new XMLParserException(getString(&quot;RuntimeError.5&quot;)); //$NON-NLS-1$</span>
+            }
+
+<span class="nc bnc" id="L189" title="All 2 branches missed.">            if (parseErrors.size() &gt; 0) {</span>
+<span class="nc" id="L190">                throw new XMLParserException(parseErrors);</span>
+            }
+
+            //返回解析出的Configuration对象
+<span class="nc" id="L194">            return config;</span>
+<span class="nc" id="L195">        } catch (ParserConfigurationException e) {</span>
+<span class="nc" id="L196">            parseErrors.add(e.getMessage());</span>
+<span class="nc" id="L197">            throw new XMLParserException(parseErrors);</span>
+        }
+    }
+
+
+    /**
+     * 用于把MBG配置文件解析为MyBatis3需要样式；
+     *
+     * @param rootNode
+     * @return
+     * @throws XMLParserException
+     */
+    private Configuration parseIbatorConfiguration(Element rootNode)
+            throws XMLParserException {
+<span class="nc" id="L211">        IbatorConfigurationParser parser = new IbatorConfigurationParser(</span>
+                extraProperties);
+<span class="nc" id="L213">        return parser.parseIbatorConfiguration(rootNode);</span>
+    }
+
+    /**
+     * 执行MyBatis生成器的配置
+     * @param rootNode
+     * @return
+     * @throws XMLParserException
+     */
+    private Configuration parseMyBatisGeneratorConfiguration(Element rootNode)
+            throws XMLParserException {
+        //创建一个MyBatisGeneratorConfigurationParser
+<span class="nc" id="L225">        MyBatisGeneratorConfigurationParser parser = new MyBatisGeneratorConfigurationParser(</span>
+                extraProperties);
+        //使用配置解析器执行XML解析
+<span class="nc" id="L228">        return parser.parseConfiguration(rootNode);</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.7.201606060606</span></div></body></html>
